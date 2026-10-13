@@ -1,6 +1,6 @@
 // Service Worker: hält die App offline bereit und meldet neue Versionen.
 // Bei jeder Veröffentlichung VERSION erhöhen (gleich wie in js/version.js). Neue Dateien in CORE eintragen.
-const VERSION = '1.0.0';
+const VERSION = '1.0.1';
 const CACHE = 'eazubi-' + VERSION;
 const FONTS = 'eazubi-fonts';
 const CORE = [

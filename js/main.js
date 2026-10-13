@@ -387,8 +387,10 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:' && !devHost) {
     });
     document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update().catch(() => {}); });
   }).catch(() => { /* ohne Service Worker läuft die App trotzdem, nur nicht offline */ });
+  // Nur neu laden, wenn eine ältere Version abgelöst wird, nicht beim allerersten Besuch
+  const hadController = !!navigator.serviceWorker.controller;
   let reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => { if (reloading) return; reloading = true; location.reload(); });
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (!hadController || reloading) return; reloading = true; location.reload(); });
 }
 
 document.getElementById('karte').addEventListener('click', e => { if (e.target.closest('[data-close]') || e.target === e.currentTarget) e.currentTarget.close(); });

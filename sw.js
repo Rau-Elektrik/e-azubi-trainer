@@ -1,6 +1,6 @@
 // Service Worker: hält die App offline bereit und meldet neue Versionen.
 // Bei jeder Veröffentlichung VERSION erhöhen (gleich wie in js/version.js). Neue Dateien in CORE eintragen.
-const VERSION = '1.0.1';
+const VERSION = '1.0.2';
 const CACHE = 'eazubi-' + VERSION;
 const FONTS = 'eazubi-fonts';
 const CORE = [
@@ -16,7 +16,8 @@ const CORE = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)));
+  // cache: 'reload' umgeht den Browser-Zwischenspeicher, sonst landen alte Dateien in der neuen Version
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE.map(u => new Request(u, { cache: 'reload' })))));
 });
 
 self.addEventListener('activate', e => {

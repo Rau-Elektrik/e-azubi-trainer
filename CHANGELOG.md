@@ -1,5 +1,8 @@
 # Änderungen
 
+## 1.0.2 · 13.10.2026
+- Updates kommen zuverlässig an: Beim Aktualisieren lädt die App ihre Dateien immer frisch vom Server und nicht aus dem Browser-Zwischenspeicher.
+
 ## 1.0.1 · 13.10.2026
 - Beim allerersten Öffnen lädt die Seite nicht mehr unnötig neu.
 

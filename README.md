@@ -4,7 +4,34 @@ Lern-App für Auszubildende im Elektrohandwerk. Ein Lernpfad wie bei Duolingo f�
 
 **App öffnen:** https://rau-elektrik.github.io/e-azubi-trainer/
 
-## Inhalte (Version 1.0)
+## So sieht die App aus
+
+<p>
+  <img src="docs/screenshots/lernpfad.png" width="240" alt="Lernpfad mit erledigten Lektionen und der nächsten Lektion">
+  <img src="docs/screenshots/lektion.png" width="240" alt="Lektion Strings auslegen: Werte aus dem Moduldatenblatt zuordnen">
+  <img src="docs/screenshots/fortschritt.png" width="240" alt="Fortschritt mit Tagesserie, Wochen-XP und Themen">
+</p>
+
+**PV-Dachplanung:** Module setzen, dann zu Strings verschalten. Die App rechnet die Stringspannung bei −10 °C und 70 °C und prüft sie gegen den Wechselrichter.
+
+![PV-Dachplanung mit zwei Strings zu je 10 Modulen](docs/screenshots/pv-strings.png)
+
+**Schaltplan-Trainer:** Bauteile aufs Blatt ziehen, verdrahten, schalten. Die Adern zeigen ihr Potential, die Lampe leuchtet, wenn der Plan stimmt.
+
+![Schaltplan-Trainer mit Wechselschaltung](docs/screenshots/schaltplan.png)
+
+**Zählerschrank nach VDE-AR-N 4100:2026-04:** Jedes Teil in den richtigen Raum setzen, vom NAR bis zum Verteilerfeld.
+
+![Zählerschrank richtig bestückt](docs/screenshots/zaehlerschrank.png)
+
+**Auf dem Handy und im dunklen Design:**
+
+<p>
+  <img src="docs/screenshots/pv-handy.png" width="240" alt="PV-Dachplanung auf dem Handy mit zwei Strings">
+  <img src="docs/screenshots/lernpfad-dunkel.png" width="240" alt="Lernpfad im dunklen Design">
+</p>
+
+## Inhalte (Version 1.1)
 
 | Abschnitt | Lektionen | Praxis |
 | --- | --- | --- |
@@ -16,7 +43,7 @@ Lern-App für Auszubildende im Elektrohandwerk. Ein Lernpfad wie bei Duolingo f�
 | 6 · Messsysteme | mME, iMSys, Gateway, Pflichtfälle, § 14a | – |
 | 7 · Erdung und Messen | Erder nach DIN 18014, Erdungswiderstand messen | Sondenmethode mit Plateau |
 | 8 · E-Mobilität | Wallbox planen, Stecker und Kommunikation | Wallbox im Verteiler nachrüsten |
-| 9 · Photovoltaik | Anlage berechnen, Planung und Betrieb | Dachfläche belegen |
+| 9 · Photovoltaik | Anlage berechnen, Planung und Betrieb, Strings auslegen | Dach belegen und Strings verschalten |
 
 Dazu kommt die **Werkstatt**: Dort lassen sich alle Praxisaufgaben frei üben. Es gibt dort ein freies Zeichenblatt für eigene Stromlaufpläne und ein Netz-Puzzle zum Abschalten.
 
@@ -50,6 +77,8 @@ js/content/abschnitte/   ein Abschnitt pro Datei: Lernkarte, Lektionen, Praxis, 
 js/content/abzeichen.js  Abzeichen
 js/practice/             Praxisaufgaben: Schaltplan, Verteiler, Zählerschrank, Erdung, PV, Netz-Puzzle
 tests/run-tests.mjs      automatische Prüfungen
+tools/                   Testserver, Bildschirmfotos, App-Symbole
+docs/screenshots/        Bilder für diese Seite
 sw.js                    Offline-Speicher und Update-Meldung
 ```
 
@@ -90,9 +119,14 @@ npm test
 ```
 prüft alle Schaltpläne, Praxisaufgaben und Fragen. Beim Hochladen auf GitHub laufen dieselben Prüfungen automatisch.
 
+```bash
+npm run screenshots
+```
+erneuert die Bilder in `docs/screenshots/`. Das Skript öffnet ein unsichtbares Chrome mit einem Beispiel-Fortschritt. Liegt Chrome woanders, gibst du den Pfad mit der Umgebungsvariable `CHROME` an.
+
 **Neue Version veröffentlichen:**
 
-1. Die Versionsnummer erhöhen, und zwar gleich in `js/version.js` und `sw.js`.
+1. Die Versionsnummer erhöhen, und zwar gleich in `js/version.js`, `sw.js` und `package.json`.
 2. Den Eintrag in `CHANGELOG.md` ergänzen.
 3. Hochladen (`git push`). GitHub Pages baut die Seite in ein bis zwei Minuten neu, danach meldet die App das Update.
 

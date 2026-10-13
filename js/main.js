@@ -216,7 +216,7 @@ const TOOLS = [
   { id: 'wallbox', title: 'Wallbox nachrüsten', text: 'Eigener Endstromkreis mit eigenem FI für 11 kW.', icon: 'plug', module: 'verteiler', task: 'wallbox' },
   { id: 'zaehlerschrank', title: 'Zählerschrank bestücken', text: 'NAR, Zählerfeld, RfZ, AAR und APZ nach VDE-AR-N 4100.', icon: 'meter', module: 'zaehlerschrank', task: 'standard' },
   { id: 'erdung', title: 'Erdungsmessung', text: 'Sondenmethode mit Hilfserder: Plateau finden und R_A bestimmen.', icon: 'earth', module: 'erdung', task: 'standard' },
-  { id: 'pv', title: 'PV-Dachplanung', text: 'Module auf ein Süddach setzen, Abstände einhalten, kWp und Ertrag rechnen.', icon: 'sun', module: 'pv', task: 'standard' },
+  { id: 'pv', title: 'PV-Dachplanung', text: 'Module auf ein Süddach setzen und zu Strings für den Wechselrichter verschalten.', icon: 'sun', module: 'pv', task: 'standard' },
   { id: 'netz', title: 'Netz-Puzzle', text: 'Kacheln drehen, bis jede Lampe Strom hat. Zum Abschalten zwischendurch.', icon: 'path', module: 'netz' }
 ];
 function viewWerkstatt(tool) {

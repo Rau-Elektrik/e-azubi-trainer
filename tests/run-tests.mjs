@@ -107,6 +107,31 @@ ok(!!pv.moduleIssue({ x: 7.5, y: 0.6, w: R.module.a, h: R.module.b }, []), 'Modu
 ok(!!pv.moduleIssue({ x: 0.1, y: 0.3, w: R.module.a, h: R.module.b }, []), 'Randabstand wird nicht erkannt');
 console.log(`  ${valid.length} Module, ${pv.kWp(valid).toFixed(2)} kWp`);
 
+// Strings: Spannungen und Verschaltung
+const [smin, smax] = pv.stringRange();
+ok(smin === 8 && smax === 22, `Stringlänge ${smin} bis ${smax} statt 8 bis 22`);
+ok(Math.abs(pv.vocCold(1) - 42.25) < 0.01, `Uoc bei Kälte ${pv.vocCold(1).toFixed(2)} V statt 42,25 V`);
+ok(Math.abs(pv.vmppHot(1) - 27.94) < 0.01, `Umpp bei Hitze ${pv.vmppHot(1).toFixed(2)} V statt 27,94 V`);
+ok(!!pv.stringIssue(7) && !pv.stringIssue(8) && !pv.stringIssue(22) && !!pv.stringIssue(23) && !!pv.stringIssue(24), 'Grenzen der Stringlänge falsch');
+ok(/1\.0\d\d V/.test(pv.stringIssue(24)), 'Überspannung wird nicht mit Spannung erklärt');
+const at = (r, c) => mods.indexOf(mods.find(m => Math.abs(m.y - (R.margin + r * (R.module.b + 0.02))) < 1e-6 && Math.abs(m.x - (R.margin + c * (R.module.a + 0.02))) < 1e-6));
+valid.forEach(m => { m.id = mods.indexOf(m) + 1; });
+const id = (r, c) => at(r, c) + 1;
+const sA = [id(1, 0), id(0, 0), id(0, 1), id(0, 2), id(0, 3), id(0, 4), id(0, 5), id(1, 5), id(1, 4), id(1, 3)];
+const sB = [id(1, 1), id(1, 2), id(2, 2), id(2, 3), id(2, 4), id(2, 5), id(2, 6), id(2, 7), id(1, 7), id(1, 6)];
+ok(sA.concat(sB).every(i => valid.some(m => m.id === i)), 'Teststrings enthalten ungültige Module');
+let se = pv.checkStrings(valid, [sA, sB]);
+ok(se.length === 0, `Gültige Verschaltung abgelehnt: ${se.join(' | ')}`);
+ok(pv.checkStrings(valid, [sB.slice().reverse().concat(sA), []]).length === 0, 'Ein String mit 20 Modulen wird abgelehnt');
+ok(pv.checkStrings(valid, [[], []]).length === 1, 'Fehlende Verschaltung wird nicht gemeldet');
+ok(pv.checkStrings(valid, [sA, sB.slice(0, 9)]).some(e => /keinem String/.test(e)), 'Freies Modul wird nicht erkannt');
+ok(pv.checkStrings(valid, [sA, [id(1, 1), id(2, 7), ...sB.slice(2, 7), id(1, 2), id(1, 7), id(1, 6)]]).some(e => /nicht nebeneinander/.test(e)), 'Sprung im String wird nicht erkannt');
+ok(pv.checkStrings(valid, [sA.slice(0, 5), sA.slice(5), sB]).some(e => /MPP-Tracker/.test(e)), 'Zu viele Strings werden nicht erkannt');
+ok(pv.checkStrings(valid, [sA.slice(0, 4), sA.slice(4).concat(sB)]).some(e => /String 1 mit 4 Modulen/.test(e)), 'Zu kurzer String wird nicht erkannt');
+ok(pv.checkStrings(valid, [sA, sB.concat([sA[0]])]).some(e => /zwei Strings/.test(e)), 'Doppelt verschaltetes Modul wird nicht erkannt');
+ok(pv.neighbors(valid.find(m => m.id === id(0, 0)), valid.find(m => m.id === id(0, 1))) && !pv.neighbors(valid.find(m => m.id === id(0, 0)), valid.find(m => m.id === id(1, 1))), 'Nachbarschaft falsch erkannt');
+console.log(`  Strings ${smin} bis ${smax} Module, Verschaltung geprüft`);
+
 // ---------- Erdung ----------
 section('Erdungsmessung');
 const p = { rho: 100, r: 0.9, par: 1.2 };
@@ -118,6 +143,9 @@ console.log(`  wahrer Wert ${er.trueR(p).toFixed(2)} Ω`);
 
 // ---------- Inhalte ----------
 section('Lerninhalte');
+// Gespeicherter Fortschritt hängt an den Knoten-IDs: eingefügte Knoten dürfen die alten Nummern nicht verschieben
+const pvSec = ABSCHNITTE.find(s => s.id === 'pv');
+ok(pvSec.nodes.map(n => n.id).join() === 'pv-1,pv-2,pv-strings,pv-3,pv-4', `PV-Knoten-IDs verschoben: ${pvSec.nodes.map(n => n.id).join()}`);
 const levelIds = new Set(ENGINE.LEVELS.map(l => l.id));
 const ids = new Set();
 let itemsN = 0;

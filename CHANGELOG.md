@@ -1,5 +1,11 @@
 # Änderungen
 
+## 1.1.0 · 13.10.2026
+- PV-Dachplanung mit Strings: Nach dem Belegen verschaltest du die Module zu bis zu zwei Strings. Die Leitungen werden mit Plus- und Minus-Ende aufs Dach gezeichnet. Die App rechnet die Leerlaufspannung bei −10 °C und die MPP-Spannung bei 70 °C und prüft sie gegen den Wechselrichter (max. 1.000 V, MPP 200–800 V, 2 MPP-Tracker). Verbunden werden nur direkte Nachbarn.
+- Neue Lektion »Strings auslegen« im Abschnitt Photovoltaik: Datenblattwerte, Temperaturkoeffizient, Stringlänge, MPP-Tracker, Verschattung und sicheres Trennen.
+- Bisheriger Fortschritt bleibt erhalten, auch wenn neue Lektionen zwischen bestehende kommen.
+- Bilder der App in der README. `npm run screenshots` erzeugt sie neu.
+
 ## 1.0.2 · 13.10.2026
 - Updates kommen zuverlässig an: Beim Aktualisieren lädt die App ihre Dateien immer frisch vom Server und nicht aus dem Browser-Zwischenspeicher.
 

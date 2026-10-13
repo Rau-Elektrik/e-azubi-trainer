@@ -10,6 +10,11 @@ Schaltplan-Trainer mit Bauteilkasten, Prüfprotokoll, Lern- und Prüfungsmodus u
 - Installierbar als App mit Offline-Betrieb und automatischen Updates über GitHub Pages
 - Automatische Tests bei jedem Hochladen
 
+## Version 1.1 (fertig)
+- PV-Dachplanung mit Strings: verschalten, zeichnen und gegen den Wechselrichter prüfen
+- Lektion »Strings auslegen«
+- Bilder der App in der README
+
 ## Phase 3 · Mehr Stoff (als Nächstes)
 - Prüfen nach DIN VDE 0100-600: Isolationsmessung, Schleifenimpedanz, FI-Prüfung als Messsimulation
 - Netzformen TN-C, TN-C-S, TN-S, TT und IT mit interaktiver Fehlerschleife
@@ -17,6 +22,7 @@ Schaltplan-Trainer mit Bauteilkasten, Prüfprotokoll, Lern- und Prüfungsmodus u
 - Brandschutz: AFDD, Brandabschottung
 - Gebäudetechnik: KNX-Grundlagen, Sprechanlagen, Netzwerk
 - Stern-Dreieck-Anlauf und Zeitrelais im Schaltplan-Trainer
+- PV: Ost-West-Dach, Speicher und DC-Leitungslänge mit Spannungsfall
 - Wiederholungsmodus: Fehler der letzten Tage gezielt üben
 - Vorbereitung auf die Gesellenprüfung Teil 1 und 2
 

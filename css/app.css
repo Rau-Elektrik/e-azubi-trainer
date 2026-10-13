@@ -43,6 +43,8 @@
   --module:#1d2a44;
   --module-line:#8fa3c4;
   --soil:#8a6b4a;
+  --str1:#ffb81c;
+  --str2:#4fd1e3;
   --head-bg:#1c2528;
   --head-fg:#f2f4f0;
   --head-line:#1c2528;
@@ -390,6 +392,33 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 .pv-stats div{display:grid;padding:10px 12px;border-radius:8px;background:var(--plate);border:1px solid var(--line);min-width:0}
 .pv-stats b{font-family:var(--font-display);font-weight:700;font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pv-note{margin:0;font-size:13px;color:var(--muted)}
+.pv .s0{--s:var(--str1)}
+.pv .s1{--s:var(--str2)}
+.pv-steps{display:flex;gap:8px;flex-wrap:wrap}
+.pv-hint{margin:0;font-size:14px;color:var(--muted)}
+.pv-roof.wiring{cursor:default}
+.pv-mod.in{stroke:var(--s);stroke-width:2.5}
+.pv-line-under{fill:none;stroke:rgba(0,0,0,.55);stroke-width:7;stroke-linejoin:round;stroke-linecap:round;pointer-events:none}
+.pv-line{fill:none;stroke:var(--s);stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round;pointer-events:none}
+.pv-node{fill:var(--s);pointer-events:none}
+.pv-badge{pointer-events:none}
+.pv-badge circle{fill:var(--s);stroke:#1c2528;stroke-width:1.5}
+.pv-badge text{font:700 15px var(--font-body);fill:#1c2528;text-anchor:middle}
+.pv-pick::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--s);box-shadow:0 0 0 1.5px var(--plate)}
+.pv-strings{display:grid;gap:6px}
+.pv-strings:empty{display:none}
+.pv-srow{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;padding:8px 12px;border-radius:8px;background:var(--plate);border:1px solid var(--line);border-left:5px solid var(--s);font-size:14px}
+.pv-srow b{font-family:var(--font-display);font-weight:600;font-size:16px}
+.pv-free{margin:0;font-size:13px;color:var(--muted)}
+.pill{display:inline-block;padding:1px 9px;border-radius:999px;font-size:12px;font-weight:700;background:var(--tile-lock);color:var(--muted)}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.bad{background:var(--bad-bg);color:var(--bad)}
+.pv-data{padding:8px 12px;border-radius:8px;background:var(--plate);border:1px solid var(--line);font-size:14px}
+.pv-data summary{cursor:pointer;font-weight:600}
+.pv-data table{margin-top:8px;border-collapse:collapse;width:100%}
+.pv-data th,.pv-data td{padding:5px 8px 5px 0;vertical-align:top;text-align:left;border-top:1px solid var(--line)}
+.pv-data th{font-weight:600;white-space:nowrap}
+@media (max-width:520px){.pv-data th{white-space:normal}}
 
 /* ---------- Schaltplan-Trainer ---------- */
 .mode{display:flex;flex-direction:column;gap:14px}

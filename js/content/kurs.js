@@ -1,5 +1,7 @@
 // Der Lernpfad: Abschnitte in Reihenfolge. Ein neuer Abschnitt ist eine neue Datei in ./abschnitte/
 // und eine Zeile in ABSCHNITTE. Knoten-IDs entstehen automatisch: <abschnitt>-<nummer>.
+// Ein Knoten, der später zwischen bestehende eingefügt wird, bekommt einen eigenen Schlüssel (key),
+// damit die Nummern der anderen und damit der gespeicherte Fortschritt gleich bleiben.
 import sicherheit from './abschnitte/sicherheit.js';
 import installation from './abschnitte/installation.js';
 import steuerung from './abschnitte/steuerung.js';
@@ -14,7 +16,8 @@ export const ABSCHNITTE = [sicherheit, installation, steuerung, verteiler, zaehl
 
 ABSCHNITTE.forEach((s, si) => {
   s.nr = si + 1;
-  s.nodes.forEach((n, ni) => { n.id = `${s.id}-${ni + 1}`; n.section = s; n.index = ni; });
+  let nr = 0;
+  s.nodes.forEach((n, ni) => { n.id = n.key ? `${s.id}-${n.key}` : `${s.id}-${++nr}`; n.section = s; n.index = ni; });
 });
 
 export const allNodes = () => ABSCHNITTE.flatMap(s => s.nodes);

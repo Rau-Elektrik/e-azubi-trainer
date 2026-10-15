@@ -1,5 +1,13 @@
 # Änderungen
 
+## 1.2.0 · 15.10.2026
+- Neuer Bereich **Schule** für den Berufsschulstoff der Elektroniker/-innen, Fachrichtung Energie- und Gebäudetechnik. Grundlage sind der KMK-Rahmenlehrplan vom 18.12.2020 und die Elektroniker-Ausbildungsverordnung von 2021.
+- Alle 13 Lernfelder, nach Lehrjahr sortiert, dazu Wirtschafts- und Sozialkunde: 64 Lektionen mit 468 Fragen. Jedes Lernfeld hat eine Lernkarte und einen Lernfeldtest.
+- Jede Frage gehört zu einem Fach: Fachkunde, Fachrechnen, Schaltpläne, WiSo oder Fachenglisch. Das Training nach Fach mischt 10 Fragen aus allen Lernfeldern bis zum eigenen Lehrjahr.
+- Prüfungstraining für Teil 1 (LF 1 bis 6) und Teil 2 der Gesellenprüfung, bestanden ab 50 % wie in der echten Prüfung.
+- Über jeder Frage steht, aus welchem Lernfeld und Fach sie stammt.
+- Neue Abzeichen für jedes Lehrjahr, WiSo und das Prüfungstraining. Der Fortschritt zeigt jetzt auch die Berufsschule.
+
 ## 1.1.0 · 13.10.2026
 - PV-Dachplanung mit Strings: Nach dem Belegen verschaltest du die Module zu bis zu zwei Strings. Die Leitungen werden mit Plus- und Minus-Ende aufs Dach gezeichnet. Die App rechnet die Leerlaufspannung bei −10 °C und die MPP-Spannung bei 70 °C und prüft sie gegen den Wechselrichter (max. 1.000 V, MPP 200–800 V, 2 MPP-Tracker). Verbunden werden nur direkte Nachbarn.
 - Neue Lektion »Strings auslegen« im Abschnitt Photovoltaik: Datenblattwerte, Temperaturkoeffizient, Stringlänge, MPP-Tracker, Verschattung und sicheres Trennen.

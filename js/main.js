@@ -3,6 +3,8 @@ import { store } from './store.js';
 import { h, esc, icon, readColors, toast, sfx, announce, boltsSVG } from './ui.js';
 import { ABSCHNITTE, findNode, sectionItems, XP } from './content/kurs.js';
 import { ABZEICHEN } from './content/abzeichen.js';
+import { BLOECKE, WISO, JAHRE, FAECHER, findFach, findBlock, findLektion, lernfelderOfYear, blockItems, lektionItems, fachItems,
+  PRUEFUNGEN, findPruefung, PRUEF_NEED, pruefDoneId, XP_SCHULE, TEST_COUNT } from './content/schule/index.js';
 import { runLesson } from './lesson.js';
 import { APP_VERSION, REPO_URL } from './version.js';
 
@@ -111,7 +113,7 @@ function viewPfad() {
     root.append(area);
     if (cur && s === act) setTimeout(() => openBubble(area, cur, pts[cur.index][0], pts[cur.index][1], 'current', true), 0);
   }
-  root.append(h('p', { class: 'path-end' }, 'Weitere Abschnitte folgen: Prüfen nach DIN VDE 0100-600, Netzformen, Brandschutz und Gebäudetechnik.'));
+  root.append(h('p', { class: 'path-end' }, 'Den Stoff der Berufsschule nach Lehrjahr und Lernfeld findest du unter „Schule“.'));
   view.append(root);
   const target = document.getElementById('sec-' + act.id);
   if (target && store.state.done && Object.keys(store.state.done).length) setTimeout(() => target.scrollIntoView({ block: 'start' }), 30);
@@ -239,6 +241,182 @@ function viewWerkstatt(tool) {
   view.append(root);
 }
 
+// ---------- Ansicht: Berufsschule ----------
+// Lernfelder sind frei wählbar: Jede Berufsschule legt die Reihenfolge selbst fest.
+const lehrjahr = () => store.state.settings.lehrjahr || 1;
+const blockDone = b => b.lektionen.filter(l => store.isDone(l.id)).length + (store.isDone(b.testId) ? 1 : 0);
+const blockPct = b => Math.round(blockDone(b) / (b.lektionen.length + 1) * 100);
+const countItems = b => b.lektionen.reduce((n, l) => n + l.items.length, 0);
+
+function lfCard(b) {
+  const pct = blockPct(b);
+  const meta = b.nr ? `${b.stunden} Stunden · ${countItems(b)} Aufgaben` : `Alle Lehrjahre · ${countItems(b)} Aufgaben`;
+  return h('a', { class: 'lf-card' + (pct === 100 ? ' done' : ''), href: `#/schule/lf/${b.id}` },
+    h('span', { class: 'lf-nr', 'aria-hidden': 'true' }, b.nr ? `LF ${b.nr}` : 'WiSo'),
+    h('span', { class: 'lf-name' }, b.title),
+    h('span', { class: 'lf-meta' }, meta,
+      h('span', { class: 'topic-bar', role: 'img', 'aria-label': `${pct} Prozent erledigt` }, h('div', { class: pct === 100 ? 'full' : '', style: `width:${pct}%` })),
+      `${pct} %`));
+}
+
+function viewSchule(parts) {
+  const [sub, id] = parts;
+  if (sub === 'lf') return viewSchulLF(id);
+  if (sub === 'lektion') return viewSchulLektion(id);
+  if (sub === 'test') return viewSchulTest(id);
+  if (sub === 'fach') return viewSchulFach(id);
+  if (sub === 'pruefung') return viewSchulPruefung(id);
+
+  const jahr = lehrjahr();
+  const J = JAHRE.find(j => j.nr === jahr);
+  const root = h('div', { class: 'page-pad' },
+    h('h1', { class: 'page-title' }, 'Berufsschule'),
+    h('p', { class: 'page-lead' }, 'Elektroniker/-in für Energie- und Gebäudetechnik. Der Stoff folgt dem Rahmenlehrplan der KMK und der Ausbildungsordnung von 2021, sortiert nach Lehrjahr, Lernfeld und Fach.'));
+
+  const seg = h('div', { class: 'seg year-seg', role: 'group', 'aria-label': 'Lehrjahr wählen' });
+  JAHRE.forEach(j => seg.append(h('button', { type: 'button', class: 'btn small', 'aria-pressed': String(j.nr === jahr), 'aria-label': j.title,
+    onclick: () => { store.setSetting('lehrjahr', j.nr); render(); } }, `${j.nr}.`)));
+  root.append(h('section', { class: 'card' }, h('h2', { class: 'lbl' }, 'Dein Lehrjahr'), seg, h('p', { class: 'year-note' }, J.text)));
+
+  root.append(h('h2', { class: 'lbl lbl-head' }, `Lernfelder im ${J.title}`));
+  const list = h('div', { class: 'lf-list' });
+  lernfelderOfYear(jahr).forEach(b => list.append(lfCard(b)));
+  list.append(lfCard(WISO));
+  root.append(list);
+  root.append(h('p', { class: 'year-note' }, 'Welches Lernfeld gerade dran ist, legt deine Berufsschule fest. Du kannst jedes frei wählen, auch aus anderen Lehrjahren.'));
+
+  root.append(h('h2', { class: 'lbl lbl-head' }, 'Training nach Fach'));
+  const fg = h('div', { class: 'tool-grid' });
+  FAECHER.forEach(f => {
+    const n = fachItems(f.id, jahr).length;
+    fg.append(h('a', { class: 'tool-card', href: `#/schule/fach/${f.id}` },
+      h('span', { class: 'tool-ico', html: icon(f.icon, 26) }), h('span', { class: 'tool-title' }, f.title), h('span', { class: 'tool-text' }, f.text),
+      h('span', { class: 'tool-count' }, `${n} Aufgaben bis ${jahr}. Lehrjahr`)));
+  });
+  root.append(fg);
+
+  root.append(h('h2', { class: 'lbl lbl-head' }, 'Prüfungstraining'));
+  const pg = h('div', { class: 'tool-grid' });
+  PRUEFUNGEN.forEach(p => {
+    const best = store.state.done[pruefDoneId(p)];
+    pg.append(h('a', { class: 'tool-card', href: `#/schule/pruefung/${p.id}` },
+      h('span', { class: 'tool-ico', html: icon('shield', 26) }), h('span', { class: 'tool-title' }, p.title), h('span', { class: 'tool-text' }, p.text),
+      h('span', { class: 'tool-count' }, `${p.count} Aufgaben · ab ${p.ab}. Lehrjahr${best ? ` · bestes Ergebnis ${Math.round(best.best * 100)} %` : ''}`)));
+  });
+  root.append(pg);
+  root.append(h('p', { class: 'year-note' }, 'Das Prüfungstraining übt den schriftlichen Teil. Bestanden ist es wie in der Gesellenprüfung ab 50 %. Die Arbeitsaufgabe und das Fachgespräch übst du im Betrieb.'));
+  view.append(root);
+}
+
+function viewSchulLF(id) {
+  const b = findBlock(id);
+  if (!b) { location.hash = '#/schule'; return; }
+  const sub = b.nr ? `${b.short} · ${b.jahr}. Lehrjahr · ${b.stunden} Stunden` : 'Begleitend in allen Lehrjahren · Prüfungsbereich in Teil 2';
+  const root = h('div', { class: 'page-pad' });
+  root.append(h('div', { class: 'lf-head' },
+    h('a', { class: 'btn small ghost', href: '#/schule', style: 'justify-self:start' }, h('span', { html: icon('back', 18) }), 'Berufsschule'),
+    h('p', { class: 'eyebrow' }, sub),
+    h('h1', { class: 'lf-title' }, b.title),
+    h('p', { class: 'page-lead' }, b.ziel),
+    h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn small', onclick: () => openKarte(b) }, h('span', { html: icon('card', 18) }), 'Lernkarte'))));
+
+  const ul = h('ol', { class: 'lk-list' });
+  b.lektionen.forEach((l, i) => {
+    const dn = store.isDone(l.id);
+    const counts = {};
+    l.items.forEach(it => { counts[it.f] = (counts[it.f] || 0) + 1; });
+    const tags = h('span', { class: 'fach-tags' }, Object.entries(counts).map(([f, n]) => h('span', { class: 'fach-tag' }, `${findFach(f).title} ${n}`)));
+    ul.append(h('li', { class: 'lk' + (dn ? ' done' : '') },
+      h('span', { class: 'lk-state', html: dn ? icon('check', 18) : String(i + 1), 'aria-label': dn ? 'erledigt' : `Lektion ${i + 1}` }),
+      h('span', { class: 'lk-name' }, l.title, h('span', { class: 'lk-sub' }, `${l.items.length} Aufgaben`), tags),
+      h('a', { class: 'btn small' + (dn ? '' : ' primary'), href: `#/schule/lektion/${l.id}` }, dn ? 'Wiederholen' : `Start · +${XP_SCHULE.lesson} XP`)));
+  });
+  const tdn = store.isDone(b.testId);
+  ul.append(h('li', { class: 'lk test' + (tdn ? ' done' : '') },
+    h('span', { class: 'lk-state', html: icon(tdn ? 'check' : 'shield', 18), 'aria-label': tdn ? 'bestanden' : 'Test' }),
+    h('span', { class: 'lk-name' }, b.nr ? 'Lernfeldtest' : 'WiSo-Test', h('span', { class: 'lk-sub' }, `${TEST_COUNT} zufällige Aufgaben aus allen Lektionen, 80 % zum Bestehen`)),
+    h('a', { class: 'btn small' + (tdn ? '' : ' primary'), href: `#/schule/test/${b.id}` }, tdn ? 'Nochmal' : `Test · +${XP_SCHULE.test} XP`)));
+  root.append(ul);
+  view.append(root);
+}
+
+function viewSchulLektion(id) {
+  const l = findLektion(id);
+  if (!l) { location.hash = '#/schule'; return; }
+  const back = `#/schule/lf/${l.block.id}`;
+  document.body.classList.add('focus');
+  runLesson(view, {
+    title: l.title, section: l.block, items: lektionItems(l), mode: 'lesson',
+    onExit: () => { location.hash = back; },
+    onDone: res => {
+      const st = store.state;
+      st.stats.lessons++;
+      if (res.perfect) st.stats.perfect++;
+      store.complete(l.id, { score: res.score });
+      reward(XP_SCHULE.lesson + (res.perfect ? XP_SCHULE.perfect : 0), res.perfect ? 'fehlerfrei' : 'Lektion geschafft');
+      location.hash = back;
+    }
+  });
+}
+
+function viewSchulTest(id) {
+  const b = findBlock(id);
+  if (!b) { location.hash = '#/schule'; return; }
+  const back = `#/schule/lf/${b.id}`;
+  document.body.classList.add('focus');
+  runLesson(view, {
+    title: `Test ${b.short}`, section: b, items: shuffleTake(blockItems(b), TEST_COUNT), mode: 'test',
+    winText: b.nr ? 'Lernfeld bestanden!' : 'WiSo bestanden!', backText: 'Zurück zum Lernfeld',
+    onExit: () => { location.hash = back; },
+    onDone: res => {
+      store.state.stats.tests++;
+      if (res.passed) {
+        store.complete(b.testId, { score: res.score });
+        reward(XP_SCHULE.test + (res.perfect ? XP_SCHULE.perfect : 0), `${b.short} bestanden`);
+      } else store.save();
+      location.hash = back;
+    }
+  });
+}
+
+function viewSchulFach(id) {
+  const f = findFach(id);
+  const pool = f ? fachItems(f.id, lehrjahr()) : [];
+  if (!pool.length) { location.hash = '#/schule'; return; }
+  document.body.classList.add('focus');
+  runLesson(view, {
+    title: f.title, items: shuffleTake(pool, TEST_COUNT), mode: 'lesson',
+    onExit: () => { location.hash = '#/schule'; },
+    onDone: res => {
+      const st = store.state;
+      st.stats.lessons++;
+      if (res.perfect) st.stats.perfect++;
+      store.save();
+      reward(XP_SCHULE.fach + (res.perfect ? XP_SCHULE.perfect : 0), `Training ${f.title}`);
+      location.hash = '#/schule';
+    }
+  });
+}
+
+function viewSchulPruefung(id) {
+  const p = findPruefung(id);
+  if (!p) { location.hash = '#/schule'; return; }
+  document.body.classList.add('focus');
+  runLesson(view, {
+    title: p.title, items: shuffleTake(p.blocks().flatMap(blockItems), p.count), mode: 'test', need: PRUEF_NEED,
+    winText: 'Prüfung bestanden!', backText: 'Zurück zur Berufsschule',
+    onExit: () => { location.hash = '#/schule'; },
+    onDone: res => {
+      store.state.stats.tests++;
+      if (res.passed) {
+        store.complete(pruefDoneId(p), { score: res.score });
+        reward(XP_SCHULE.pruefung + (res.perfect ? XP_SCHULE.perfect : 0), `${p.title} bestanden`);
+      } else store.save();
+      location.hash = '#/schule';
+    }
+  });
+}
+
 // ---------- Ansicht: Fortschritt ----------
 function viewFortschritt() {
   const s = store.state;
@@ -271,6 +449,14 @@ function viewFortschritt() {
       h('b', null, `${pct} %`)));
   });
   root.append(topics);
+  const school = h('section', { class: 'card' }, h('h2', { class: 'lbl' }, 'Berufsschule'));
+  BLOECKE.forEach(b => {
+    const pct = blockPct(b);
+    school.append(h('div', { class: 'topic' }, h('span', null, b.short),
+      h('div', { class: 'topic-bar', role: 'img', 'aria-label': `${b.short}: ${pct} Prozent` }, h('div', { class: pct === 100 ? 'full' : '', style: `width:${pct}%` })),
+      h('b', null, `${pct} %`)));
+  });
+  root.append(school);
   const badges = h('section', { class: 'card' }, h('h2', { class: 'lbl' }, 'Abzeichen'));
   const bg = h('div', { class: 'badges' });
   ABZEICHEN.forEach(b => {
@@ -326,6 +512,7 @@ function viewProfil() {
 
   root.append(h('section', { class: 'card about' }, h('h2', { class: 'lbl' }, 'Über die App'),
     h('p', null, `E-Azubi Trainer, Version ${APP_VERSION}. Lern-App für Auszubildende im Elektrohandwerk.`),
+    h('p', null, 'Der Bereich Berufsschule folgt dem KMK-Rahmenlehrplan für Elektroniker/-innen vom 18.12.2020 und der Elektroniker-Ausbildungsverordnung von 2021, Fachrichtung Energie- und Gebäudetechnik.'),
     h('p', null, 'Die Inhalte folgen unter anderem DIN VDE 0100, VDE-AR-N 4100 (Fassung 2026-04), DIN 18014, dem Messstellenbetriebsgesetz und § 14a EnWG. Verbindlich sind immer der Normtext und die TAB deines Netzbetreibers.'),
     h('p', null, 'Quellcode und Updates: ', h('a', { href: REPO_URL, target: '_blank', rel: 'noopener' }, REPO_URL.replace('https://', '')))));
   view.append(root);
@@ -359,6 +546,7 @@ function render() {
     case 'lektion': viewLektion(a); break;
     case 'praxis': viewPraxisNode(a); break;
     case 'werkstatt': viewWerkstatt(a); break;
+    case 'schule': viewSchule(parts.slice(1)); break;
     case 'fortschritt': viewFortschritt(); break;
     case 'profil': viewProfil(); break;
     default: viewPfad();

@@ -31,7 +31,7 @@ Lern-App für Auszubildende im Elektrohandwerk. Ein Lernpfad wie bei Duolingo f�
   <img src="docs/screenshots/lernpfad-dunkel.png" width="240" alt="Lernpfad im dunklen Design">
 </p>
 
-## Inhalte (Version 1.1)
+## Inhalte (Version 1.2)
 
 | Abschnitt | Lektionen | Praxis |
 | --- | --- | --- |
@@ -44,6 +44,20 @@ Lern-App für Auszubildende im Elektrohandwerk. Ein Lernpfad wie bei Duolingo f�
 | 7 · Erdung und Messen | Erder nach DIN 18014, Erdungswiderstand messen | Sondenmethode mit Plateau |
 | 8 · E-Mobilität | Wallbox planen, Stecker und Kommunikation | Wallbox im Verteiler nachrüsten |
 | 9 · Photovoltaik | Anlage berechnen, Planung und Betrieb, Strings auslegen | Dach belegen und Strings verschalten |
+
+### Berufsschule
+
+Der Bereich **Schule** folgt dem KMK-Rahmenlehrplan für Elektroniker/-innen (Beschluss vom 18.12.2020) und der Elektroniker-Ausbildungsverordnung von 2021, Fachrichtung Energie- und Gebäudetechnik. Die Azubis wählen ihr Lehrjahr und sehen die Lernfelder dazu. Jedes Lernfeld hat mehrere Lektionen, eine Lernkarte und einen Lernfeldtest. Jede Frage gehört zu einem Fach: Fachkunde, Fachrechnen, Schaltpläne, WiSo oder Fachenglisch.
+
+| Lehrjahr | Lernfelder |
+| --- | --- |
+| 1 | LF 1 Systeme analysieren und Fehler beheben · LF 2 Elektrische Systeme planen und installieren · LF 3 Steuerungen und Regelungen · LF 4 Informationstechnische Systeme |
+| 2 | LF 5 Energieversorgung und Sicherheit · LF 6 Systeme analysieren und prüfen · LF 7 Steuerungen programmieren · LF 8 Energiewandlungssysteme |
+| 3 | LF 9 Kommunikation in Wohn- und Zweckbauten · LF 10 Geräte und Anlagen der Haustechnik · LF 11 Energietechnische Systeme |
+| 4 | LF 12 Anlagen planen und realisieren · LF 13 Systeme anpassen und dokumentieren |
+| alle | Wirtschafts- und Sozialkunde |
+
+Dazu gibt es ein **Training nach Fach** (10 Aufgaben aus allen Lernfeldern bis zum gewählten Lehrjahr) und ein **Prüfungstraining** für Teil 1 (LF 1 bis 6, 20 Aufgaben) und Teil 2 der Gesellenprüfung (alle Lernfelder und WiSo, 30 Aufgaben). Bestanden ist es wie in der Prüfung ab 50 %.
 
 Dazu kommt die **Werkstatt**: Dort lassen sich alle Praxisaufgaben frei üben. Es gibt dort ein freies Zeichenblatt für eigene Stromlaufpläne und ein Netz-Puzzle zum Abschalten.
 
@@ -74,6 +88,7 @@ js/lesson.js             Ablauf einer Lektion und die Aufgabentypen
 js/store.js              Fortschritt, XP und Tagesserie
 js/content/kurs.js       Reihenfolge der Abschnitte und XP-Regeln
 js/content/abschnitte/   ein Abschnitt pro Datei: Lernkarte, Lektionen, Praxis, Test
+js/content/schule/       Berufsschule: Lernfelder je Lehrjahr (jahr1.js bis jahr4.js), WiSo, Fächer, Prüfungstraining
 js/content/abzeichen.js  Abzeichen
 js/practice/             Praxisaufgaben: Schaltplan, Verteiler, Zählerschrank, Erdung, PV, Netz-Puzzle
 tests/run-tests.mjs      automatische Prüfungen
@@ -100,6 +115,8 @@ sw.js                    Offline-Speicher und Update-Meldung
 | `num` | Rechenaufgabe | Zahl, dazu `tol` (Toleranz) und `unit` |
 
 `x` ist die Erklärung, die nach der Antwort erscheint.
+
+Im Bereich Berufsschule stehen die Fragen in `js/content/schule/jahr1.js` bis `jahr4.js` und `wiso.js`. Jede Lektion hat ein Fach (`fach: 'fk'`), das für alle ihre Fragen gilt. Eine einzelne Frage kann mit `f: 'en'` einem anderen Fach zugeordnet werden. Die Fächer stehen in `js/content/schule/faecher.js`. Neue Lektionen hängst du am besten hinten an, sonst verschieben sich die gespeicherten Fortschritte. Muss eine Lektion dazwischen, bekommt sie einen eigenen `key`.
 
 ### Einen Abschnitt ergänzen
 

@@ -141,6 +141,21 @@ ok(er.measured(p, 8, 0.72, true) / er.measured(p, 8, 0.52, true) > 1.1, 'Bei 8 m
 ok(er.measured(p, 40, 0.62, false) < er.trueR(p) / 5, 'Geschlossene Trennstelle senkt den Wert nicht');
 console.log(`  wahrer Wert ${er.trueR(p).toFixed(2)} Ω`);
 
+// Prüft eine Aufgabe aus Lernpfad oder Berufsschule auf vollständige, gültige Angaben
+function checkItem(it, where) {
+  ok(typeof it.q === 'string' && it.q.length > 5, `${where}: Frage fehlt`);
+  ok(typeof it.x === 'string' && it.x.length > 5, `${where}: Erklärung fehlt`);
+  switch (it.t) {
+    case 'choice': ok(Array.isArray(it.a) && it.a.length >= 2 && new Set(it.a).size === it.a.length && Number.isInteger(it.r) && it.r >= 0 && it.r < it.a.length, `${where}: Auswahl ungültig`); break;
+    case 'multi': ok(Array.isArray(it.a) && Array.isArray(it.r) && it.r.length >= 1 && it.r.every(k => k >= 0 && k < it.a.length), `${where}: Mehrfachauswahl ungültig`); break;
+    case 'tf': ok(typeof it.r === 'boolean', `${where}: richtig/falsch ohne Lösung`); break;
+    case 'order': ok(Array.isArray(it.a) && it.a.length >= 3 && new Set(it.a).size === it.a.length, `${where}: Reihenfolge ungültig`); break;
+    case 'match': ok(Array.isArray(it.a) && it.a.length >= 2 && it.a.every(p2 => p2.length === 2) && new Set(it.a.map(p2 => p2[1])).size === it.a.length, `${where}: Zuordnung ungültig`); break;
+    case 'num': ok(Number.isFinite(it.r) && it.tol >= 0 && typeof it.unit === 'string', `${where}: Rechenaufgabe ungültig`); break;
+    default: ok(false, `${where}: unbekannter Typ ${it.t}`);
+  }
+}
+
 // ---------- Inhalte ----------
 section('Lerninhalte');
 // Gespeicherter Fortschritt hängt an den Knoten-IDs: eingefügte Knoten dürfen die alten Nummern nicht verschieben
@@ -161,25 +176,46 @@ for (const s of ABSCHNITTE) {
     }
     if (n.kind !== 'lektion') continue;
     ok(n.items.length >= 4, `${n.id}: zu wenige Aufgaben`);
-    n.items.forEach((it, i) => {
-      itemsN++;
-      const where = `${n.id} Aufgabe ${i + 1}`;
-      ok(typeof it.q === 'string' && it.q.length > 5, `${where}: Frage fehlt`);
-      ok(typeof it.x === 'string' && it.x.length > 5, `${where}: Erklärung fehlt`);
-      switch (it.t) {
-        case 'choice': ok(Array.isArray(it.a) && it.a.length >= 2 && Number.isInteger(it.r) && it.r >= 0 && it.r < it.a.length, `${where}: Auswahl ungültig`); break;
-        case 'multi': ok(Array.isArray(it.a) && Array.isArray(it.r) && it.r.length >= 1 && it.r.every(k => k >= 0 && k < it.a.length), `${where}: Mehrfachauswahl ungültig`); break;
-        case 'tf': ok(typeof it.r === 'boolean', `${where}: richtig/falsch ohne Lösung`); break;
-        case 'order': ok(Array.isArray(it.a) && it.a.length >= 3 && new Set(it.a).size === it.a.length, `${where}: Reihenfolge ungültig`); break;
-        case 'match': ok(Array.isArray(it.a) && it.a.length >= 2 && it.a.every(p2 => p2.length === 2) && new Set(it.a.map(p2 => p2[1])).size === it.a.length, `${where}: Zuordnung ungültig`); break;
-        case 'num': ok(Number.isFinite(it.r) && it.tol >= 0 && typeof it.unit === 'string', `${where}: Rechenaufgabe ungültig`); break;
-        default: ok(false, `${where}: unbekannter Typ ${it.t}`);
-      }
-    });
+    n.items.forEach((it, i) => { itemsN++; checkItem(it, `${n.id} Aufgabe ${i + 1}`); });
   }
 }
 ok(new Set(ABZEICHEN.map(b => b.id)).size === ABZEICHEN.length, 'doppelte Abzeichen-ID');
 console.log(`  ${ABSCHNITTE.length} Abschnitte, ${allNodes().length} Knoten, ${itemsN} Aufgaben`);
+
+// ---------- Berufsschule ----------
+section('Berufsschule');
+const BS = await import('../js/content/schule/index.js');
+ok(BS.LERNFELDER.map(b => b.nr).join() === '1,2,3,4,5,6,7,8,9,10,11,12,13', 'Lernfelder 1 bis 13 fehlen oder sind nicht in Reihenfolge');
+ok([1, 2, 3, 4].every(j => BS.lernfelderOfYear(j).length >= 2), 'Ein Lehrjahr hat weniger als zwei Lernfelder');
+ok(BS.LERNFELDER.reduce((n, b) => n + b.stunden, 0) === 1020, 'Zeitrichtwerte ergeben nicht 1.020 Stunden wie im Rahmenlehrplan');
+const fachIds = new Set(BS.FAECHER.map(f => f.id));
+const bsIds = new Set();
+let bsItems = 0;
+const perFach = {};
+for (const b of BS.BLOECKE) {
+  ok(b.id && b.title && b.ziel && Array.isArray(b.karte) && b.karte.length >= 3, `${b.id}: Kopfdaten oder Lernkarte unvollständig`);
+  ok(b.lektionen.length >= 3, `${b.id}: zu wenige Lektionen`);
+  ok(!ids.has(b.testId) && !bsIds.has(b.testId), `doppelte Test-ID ${b.testId}`); bsIds.add(b.testId);
+  for (const l of b.lektionen) {
+    ok(!ids.has(l.id) && !bsIds.has(l.id), `doppelte Lektions-ID ${l.id}`); bsIds.add(l.id);
+    ok(!!l.title && fachIds.has(l.fach), `${l.id}: Titel oder Fach fehlt`);
+    ok(l.items.length >= 5, `${l.id}: zu wenige Aufgaben`);
+    l.items.forEach((it, i) => {
+      bsItems++;
+      const where = `${l.id} Aufgabe ${i + 1}`;
+      ok(fachIds.has(it.f), `${where}: unbekanntes Fach ${it.f}`);
+      perFach[it.f] = (perFach[it.f] || 0) + 1;
+      checkItem(it, where);
+    });
+  }
+  ok(BS.blockItems(b).length >= BS.TEST_COUNT, `${b.id}: zu wenige Aufgaben für den Test`);
+}
+for (const f of BS.FAECHER) ok((perFach[f.id] || 0) >= 20, `Fach ${f.title} hat nur ${perFach[f.id] || 0} Aufgaben`);
+ok(BS.fachItems('fr', 1).every(it => !/^LF (5|6|7|8|9|10|11|12|13) /.test(it.tag)), 'Fachtraining 1. Lehrjahr enthält Stoff späterer Jahre');
+for (const p of BS.PRUEFUNGEN) ok(p.blocks().flatMap(BS.blockItems).length >= p.count * 3, `${p.id}: zu kleiner Aufgabenpool`);
+ok(BS.findLektion('lf5-1').block.id === 'lf5' && BS.lektionItems(BS.findLektion('lf5-1'))[0].tag.startsWith('LF 5 · '), 'Lektion lf5-1 oder ihre Kennzeichnung fehlt');
+console.log(`  ${BS.LERNFELDER.length} Lernfelder und WiSo, ${bsIds.size - BS.BLOECKE.length} Lektionen, ${bsItems} Aufgaben`);
+console.log('  ' + BS.FAECHER.map(f => `${f.title} ${perFach[f.id] || 0}`).join(', '));
 
 // ---------- Version und Offline-Liste ----------
 section('Version und Service Worker');

@@ -15,6 +15,11 @@ Schaltplan-Trainer mit Bauteilkasten, Prüfprotokoll, Lern- und Prüfungsmodus u
 - Lektion »Strings auslegen«
 - Bilder der App in der README
 
+## Version 1.2 (fertig)
+- Bereich Berufsschule: 13 Lernfelder nach KMK-Rahmenlehrplan und WiSo, sortiert nach Lehrjahr
+- Fragen nach Fach: Fachkunde, Fachrechnen, Schaltpläne, WiSo, Fachenglisch
+- Prüfungstraining für Teil 1 und Teil 2 der Gesellenprüfung
+
 ## Phase 3 · Mehr Stoff (als Nächstes)
 - Prüfen nach DIN VDE 0100-600: Isolationsmessung, Schleifenimpedanz, FI-Prüfung als Messsimulation
 - Netzformen TN-C, TN-C-S, TN-S, TT und IT mit interaktiver Fehlerschleife
@@ -24,7 +29,7 @@ Schaltplan-Trainer mit Bauteilkasten, Prüfprotokoll, Lern- und Prüfungsmodus u
 - Stern-Dreieck-Anlauf und Zeitrelais im Schaltplan-Trainer
 - PV: Ost-West-Dach, Speicher und DC-Leitungslänge mit Spannungsfall
 - Wiederholungsmodus: Fehler der letzten Tage gezielt üben
-- Vorbereitung auf die Gesellenprüfung Teil 1 und 2
+- Prüfungstraining ausbauen: Situationsaufgaben wie in der Gesellenprüfung, mit Schaltplan und mehreren Teilfragen
 
 ## Phase 4 · Ausbilder (später)
 - Gruppen für Lehrjahre anlegen

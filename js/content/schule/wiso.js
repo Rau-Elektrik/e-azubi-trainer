@@ -1,0 +1,158 @@
+// Wirtschafts- und Sozialkunde: in allen Lehrjahren Unterricht, in Teil 2 der Gesellenprüfung
+// eigener Prüfungsbereich (60 Minuten, 10 % der Gesamtnote). Dazu die integrativen Inhalte der
+// Ausbildungsordnung: Berufsbildung, Arbeits- und Tarifrecht, Sicherheit, Umweltschutz.
+export default {
+  id: 'wiso', nr: 0, jahr: 0, stunden: 0,
+  title: 'Wirtschafts- und Sozialkunde',
+  ziel: 'Ausbildung, Arbeitsrecht und Mitbestimmung, Sozialversicherung und Lohn, Betrieb und Verträge, Arbeits- und Umweltschutz.',
+  karte: [
+    'Probezeit 1 bis 4 Monate. In der Probezeit kündigen beide Seiten jederzeit ohne Frist, schriftlich.',
+    'Jugendliche: höchstens 8 Stunden am Tag und 40 in der Woche. Unterweisung mindestens halbjährlich.',
+    'Fünf Zweige der Sozialversicherung: Kranken-, Pflege-, Renten-, Arbeitslosen- und Unfallversicherung. Die Unfallversicherung zahlt der Arbeitgeber allein.',
+    'Gesetzlicher Mindesturlaub: 24 Werktage, bei der 5-Tage-Woche also 20 Arbeitstage.',
+    'Betriebsrat ab 5 ständigen wahlberechtigten Beschäftigten, Jugend- und Auszubildendenvertretung zusätzlich ab 5 Jugendlichen oder Azubis unter 25.',
+    'Mängelhaftung: bewegliche Sachen 2 Jahre, Arbeiten an einem Bauwerk 5 Jahre ab Abnahme.'
+  ],
+  lektionen: [
+    {
+      title: 'Ausbildung und Jugendarbeitsschutz', fach: 'wiso',
+      items: [
+        { t: 'choice', q: 'Wie lang darf die Probezeit in der Ausbildung sein?',
+          a: ['Mindestens 1 und höchstens 4 Monate', 'Genau 6 Monate', 'Bis zu einem Jahr', 'Es gibt keine Probezeit'], r: 0,
+          x: 'So steht es im Berufsbildungsgesetz. Die genaue Dauer steht im Ausbildungsvertrag.' },
+        { t: 'choice', q: 'Wie kann ein Ausbildungsverhältnis in der Probezeit gekündigt werden?',
+          a: ['Jederzeit ohne Frist, aber schriftlich', 'Nur mit drei Monaten Frist', 'Nur durch die Handwerkskammer', 'Gar nicht'], r: 0,
+          x: 'Eine Begründung ist in der Probezeit nicht nötig.' },
+        { t: 'choice', q: 'Wann kann ein Azubi nach der Probezeit selbst kündigen?',
+          a: ['Mit 4 Wochen Frist, wenn er die Ausbildung aufgibt oder einen anderen Beruf lernen will', 'Jederzeit ohne Grund mit einem Tag Frist', 'Nie', 'Nur mit Zustimmung der Handwerkskammer'], r: 0,
+          x: 'Außerdem können beide Seiten aus wichtigem Grund fristlos kündigen.' },
+        { t: 'multi', q: 'Was sind Pflichten des Ausbildungsbetriebs?',
+          a: ['Ausbildungsmittel kostenlos stellen', 'Für die Berufsschule freistellen', 'Die Ausbildungsvergütung zahlen', 'Die Gesellenprüfung für den Azubi schreiben'], r: [0, 1, 2],
+          x: 'Der Betrieb muss auch dafür sorgen, dass nur Aufgaben übertragen werden, die dem Ausbildungszweck dienen.' },
+        { t: 'tf', q: 'Der Azubi muss einen Ausbildungsnachweis (Berichtsheft) führen. Er ist Voraussetzung für die Zulassung zur Gesellenprüfung.', r: true,
+          x: 'Der Ausbilder sieht ihn regelmäßig durch. Er darf auch elektronisch geführt werden.' },
+        { t: 'choice', q: 'Wie lange dürfen Jugendliche unter 18 höchstens arbeiten?',
+          a: ['8 Stunden am Tag und 40 Stunden in der Woche', '10 Stunden am Tag und 50 in der Woche', '6 Stunden am Tag', 'So lange wie Erwachsene'], r: 0,
+          x: 'So regelt es das Jugendarbeitsschutzgesetz. Dazu kommen Pausen und eine Nachtruhe.' },
+        { t: 'choice', q: 'Ein Azubi ist zu Beginn des Kalenderjahres 16 Jahre alt. Wie viele Werktage Urlaub stehen ihm mindestens zu?',
+          a: ['27 Werktage', '24 Werktage', '30 Werktage', '20 Werktage'], r: 0,
+          x: 'Noch nicht 16: 30 Werktage, noch nicht 17: 27, noch nicht 18: 25. Werktage sind Montag bis Samstag.' },
+        { t: 'tf', q: 'Ein jugendlicher Azubi hat einmal pro Woche mehr als fünf Unterrichtsstunden. Danach muss er nicht mehr in den Betrieb.', r: true,
+          x: 'Dieser Berufsschultag zählt mit 8 Stunden auf die Arbeitszeit. Für Erwachsene gilt die Regel nicht.' },
+        { t: 'choice', q: 'Wer ist im Handwerk die zuständige Stelle für die Ausbildung?',
+          a: ['Die Handwerkskammer', 'Die Arbeitsagentur', 'Die Berufsgenossenschaft', 'Das Finanzamt'], r: 0,
+          x: 'Sie führt das Verzeichnis der Ausbildungsverhältnisse (Lehrlingsrolle), berät und organisiert die Prüfungen.' }
+      ]
+    },
+    {
+      title: 'Arbeitsrecht und Mitbestimmung', fach: 'wiso',
+      items: [
+        { t: 'choice', q: 'Wie viel Urlaub steht Erwachsenen nach dem Bundesurlaubsgesetz mindestens zu?',
+          a: ['24 Werktage, bei der 5-Tage-Woche 20 Arbeitstage', '30 Arbeitstage', '14 Tage', '10 Werktage'], r: 0,
+          x: 'Tarif- oder Arbeitsverträge geben oft mehr.' },
+        { t: 'choice', q: 'Welche gesetzliche Kündigungsfrist gilt für Arbeitnehmer ohne andere Vereinbarung?',
+          a: ['4 Wochen zum 15. oder zum Monatsende', '1 Woche', '3 Monate zum Quartalsende', 'Keine'], r: 0,
+          x: 'Für den Arbeitgeber verlängert sich die Frist mit der Dauer der Betriebszugehörigkeit.' },
+        { t: 'choice', q: 'Wer schließt einen Tarifvertrag ab?',
+          a: ['Gewerkschaft und Arbeitgeberverband oder einzelner Arbeitgeber', 'Betriebsrat und Chef', 'Staat und Handwerkskammer', 'Jeder Arbeitnehmer für sich'], r: 0,
+          x: 'Das heißt Tarifautonomie. Im Handwerk verhandeln oft die Landesinnungsverbände.' },
+        { t: 'choice', q: 'Was bedeutet Friedenspflicht?',
+          a: ['Während der Laufzeit eines Tarifvertrags wird über seine Inhalte nicht gestreikt', 'Im Betrieb darf nicht gestritten werden', 'Der Betriebsrat darf nicht verhandeln', 'Kündigungen sind verboten'], r: 0,
+          x: 'Erst nach Ablauf darf die Gewerkschaft zu Streiks aufrufen.' },
+        { t: 'choice', q: 'Ab wie vielen ständigen wahlberechtigten Beschäftigten kann ein Betriebsrat gewählt werden?',
+          a: ['Ab 5', 'Ab 50', 'Ab 1', 'Ab 100'], r: 0,
+          x: 'Die Amtszeit beträgt vier Jahre.' },
+        { t: 'choice', q: 'Wen vertritt die Jugend- und Auszubildendenvertretung (JAV)?',
+          a: ['Beschäftigte unter 18 und Azubis unter 25', 'Nur die Ausbilder', 'Alle Beschäftigten über 50', 'Die Kunden'], r: 0,
+          x: 'Sie kann nur gewählt werden, wenn es einen Betriebsrat gibt.' },
+        { t: 'choice', q: 'Wie lange dürfen Erwachsene nach dem Arbeitszeitgesetz werktäglich arbeiten?',
+          a: ['8 Stunden, verlängerbar auf 10 Stunden mit Ausgleich', '12 Stunden ohne Grenze', '6 Stunden', 'Unbegrenzt'], r: 0,
+          x: 'Innerhalb von sechs Monaten muss im Schnitt der 8-Stunden-Tag herauskommen.' },
+        { t: 'tf', q: 'Wer krank ist, muss den Betrieb unverzüglich informieren.', r: true,
+          x: 'Spätestens ab dem vierten Tag braucht es eine ärztliche Bescheinigung. Der Arbeitgeber darf sie früher verlangen.' },
+        { t: 'choice', q: 'Wann gilt das Kündigungsschutzgesetz?',
+          a: ['In Betrieben mit mehr als 10 Beschäftigten nach 6 Monaten Betriebszugehörigkeit', 'In jedem Betrieb ab dem ersten Tag', 'Nur im öffentlichen Dienst', 'Nur für Azubis'], r: 0,
+          x: 'Dann braucht eine Kündigung durch den Arbeitgeber einen sozial gerechtfertigten Grund.' }
+      ]
+    },
+    {
+      title: 'Sozialversicherung und Lohn', fach: 'wiso',
+      items: [
+        { t: 'multi', q: 'Welche Zweige gehören zur gesetzlichen Sozialversicherung?',
+          a: ['Krankenversicherung', 'Rentenversicherung', 'Unfallversicherung', 'Kfz-Haftpflichtversicherung'], r: [0, 1, 2],
+          x: 'Dazu kommen Pflege- und Arbeitslosenversicherung, zusammen fünf Zweige.' },
+        { t: 'choice', q: 'Wer zahlt die Beiträge zur gesetzlichen Unfallversicherung?',
+          a: ['Der Arbeitgeber allein', 'Der Arbeitnehmer allein', 'Beide je zur Hälfte', 'Der Staat'], r: 0,
+          x: 'Die anderen Zweige teilen sich Arbeitgeber und Arbeitnehmer im Wesentlichen.' },
+        { t: 'choice', q: 'Wer ist Träger der Unfallversicherung im Elektrohandwerk?',
+          a: ['Die Berufsgenossenschaft Energie Textil Elektro Medienerzeugnisse (BG ETEM)', 'Die Krankenkasse', 'Die Handwerkskammer', 'Die Rentenversicherung'], r: 0,
+          x: 'Sie erlässt auch die Unfallverhütungsvorschriften, etwa die DGUV Vorschrift 3.' },
+        { t: 'tf', q: 'Der direkte Weg zur Berufsschule ist durch die gesetzliche Unfallversicherung versichert.', r: true,
+          x: 'Auch der Weg zur Arbeit. Ein privater Umweg, etwa zum Einkaufen, ist nicht versichert.' },
+        { t: 'choice', q: 'Wie kommt man vom Brutto- zum Nettolohn?',
+          a: ['Brutto minus Steuern und Arbeitnehmeranteil zur Sozialversicherung', 'Brutto plus Urlaubsgeld', 'Brutto minus Arbeitgeberanteil', 'Brutto geteilt durch 12'], r: 0,
+          x: 'Steuern sind Lohnsteuer und gegebenenfalls Kirchensteuer und Solidaritätszuschlag.' },
+        { t: 'num', f: 'fr', q: 'Ein Azubi verdient 1.000 € brutto. Vereinfacht gehen 20 % Sozialversicherung ab, Steuern fallen nicht an. Wie viel bleibt netto?', r: 800, tol: 0, unit: '€',
+          x: '1.000 € · 0,8 = 800 €. Die echten Beitragssätze ändern sich von Jahr zu Jahr.' },
+        { t: 'choice', q: 'Ein Azubi verdient höchstens 325 € im Monat. Wer zahlt dann die Sozialversicherung?',
+          a: ['Der Arbeitgeber allein', 'Der Azubi allein', 'Niemand', 'Die Eltern'], r: 0,
+          x: 'Das ist die Geringverdienergrenze für Auszubildende.' },
+        { t: 'choice', q: 'Welche Steuerklasse hat ein lediger Arbeitnehmer ohne Kinder?',
+          a: ['I', 'III', 'V', 'VI'], r: 0,
+          x: 'Steuerklasse VI gilt für ein zweites Arbeitsverhältnis.' }
+      ]
+    },
+    {
+      title: 'Betrieb, Verträge und Markt', fach: 'wiso',
+      items: [
+        { t: 'match', q: 'Ordne die Rechtsform ihrer Haftung zu.',
+          a: [['Eingetragener Kaufmann (e. K.)', 'Der Inhaber haftet auch mit seinem Privatvermögen'], ['GmbH', 'Haftet mit dem Gesellschaftsvermögen, Stammkapital 25.000 €'], ['UG (haftungsbeschränkt)', 'Wie die GmbH, aber ab 1 € Stammkapital'], ['GbR', 'Alle Gesellschafter haften persönlich']],
+          x: 'Viele Handwerksbetriebe starten als Einzelunternehmen und wechseln mit dem Wachstum zur GmbH.' },
+        { t: 'choice', q: 'Wie kommt ein Kaufvertrag zustande?',
+          a: ['Durch zwei übereinstimmende Willenserklärungen: Antrag und Annahme', 'Erst mit der Bezahlung', 'Nur mit Notar', 'Durch die Lieferung'], r: 0,
+          x: 'Auch ein Auftrag am Telefon kann ein wirksamer Vertrag sein.' },
+        { t: 'choice', q: 'Wie lange haftet der Betrieb für Mängel an einer Elektroinstallation in einem Gebäude nach BGB?',
+          a: ['5 Jahre ab Abnahme', '6 Monate', '2 Jahre ab Bestellung', '30 Jahre'], r: 0,
+          x: 'Arbeiten an einem Bauwerk haben 5 Jahre. Beim Kauf beweglicher Sachen sind es 2 Jahre. Mit VOB/B kann eine andere Frist vereinbart sein.' },
+        { t: 'choice', q: 'Ein Kunde meldet einen Mangel an der neuen Installation. Was hat der Betrieb zuerst?',
+          a: ['Das Recht zur Nacherfüllung, also den Mangel selbst zu beheben', 'Gar keine Pflicht', 'Die Pflicht, sofort den vollen Preis zu erstatten', 'Das Recht, den Kunden zu verklagen'], r: 0,
+          x: 'Erst wenn die Nacherfüllung scheitert, kann der Kunde mindern, zurücktreten oder Schadensersatz verlangen.' },
+        { t: 'choice', q: 'Warum braucht ein Elektrobetrieb einen Meister oder eine gleichwertige Qualifikation?',
+          a: ['Das Elektrotechniker-Handwerk ist zulassungspflichtig, der Betrieb muss in die Handwerksrolle', 'Das ist freiwillig', 'Nur für die Werbung', 'Nur für Betriebe mit über 50 Beschäftigten'], r: 0,
+          x: 'Die Meisterpflicht gilt für gefahrgeneigte Handwerke der Anlage A der Handwerksordnung.' },
+        { t: 'tf', q: 'Die Mitgliedschaft in der Handwerkskammer ist Pflicht, die in der Innung freiwillig.', r: true,
+          x: 'Die Innung vertritt die Interessen der Betriebe ihres Handwerks, nimmt oft Gesellenprüfungen ab und bietet Schulungen.' },
+        { t: 'num', f: 'fr', q: 'Ein Betrieb nimmt einen Kredit über 2.000 € zu 6 % Zinsen im Jahr auf. Wie viel Zinsen fallen nach einem Jahr an?', r: 120, tol: 0, unit: '€',
+          x: '2.000 € · 0,06 = 120 €.' },
+        { t: 'choice', q: 'Was passiert am Markt meist, wenn die Nachfrage nach Wärmepumpen stark steigt und das Angebot gleich bleibt?',
+          a: ['Die Preise steigen', 'Die Preise sinken', 'Nichts', 'Die Geräte werden verboten'], r: 0,
+          x: 'Steigt danach das Angebot, weil mehr produziert wird, sinken die Preise wieder.' }
+      ]
+    },
+    {
+      title: 'Arbeitsschutz und Umweltschutz', fach: 'wiso',
+      items: [
+        { t: 'choice', q: 'Wer stellt die persönliche Schutzausrüstung und bezahlt sie?',
+          a: ['Der Arbeitgeber', 'Der Azubi selbst', 'Die Berufsschule', 'Die Krankenkasse'], r: 0,
+          x: 'Der Beschäftigte muss sie bestimmungsgemäß benutzen.' },
+        { t: 'choice', q: 'Wie oft müssen Jugendliche über die Gefahren bei der Arbeit unterwiesen werden?',
+          a: ['Vor Beginn und dann mindestens halbjährlich', 'Einmal zu Beginn der Ausbildung', 'Alle fünf Jahre', 'Nur nach einem Unfall'], r: 0,
+          x: 'Erwachsene werden mindestens jährlich unterwiesen.' },
+        { t: 'match', q: 'Ordne die Farbe der Sicherheitszeichen ihrer Bedeutung zu.',
+          a: [['Rot', 'Verbot oder Brandschutz'], ['Blau', 'Gebot'], ['Gelb', 'Warnung'], ['Grün', 'Rettung und Erste Hilfe']],
+          x: 'Beispiele: Rauchen verboten, Gehörschutz benutzen, Warnung vor elektrischer Spannung, Notausgang.' },
+        { t: 'choice', q: 'Wer erstellt die Gefährdungsbeurteilung im Betrieb?',
+          a: ['Der Arbeitgeber, unterstützt von Fachkraft für Arbeitssicherheit und Betriebsarzt', 'Der Azubi', 'Die Polizei', 'Der Kunde'], r: 0,
+          x: 'Sie ist die Grundlage für alle Schutzmaßnahmen und Unterweisungen.' },
+        { t: 'tf', q: 'Nach einem Arbeitsunfall mit mehr als drei Tagen Arbeitsunfähigkeit muss der Betrieb eine Unfallanzeige an die Berufsgenossenschaft schicken.', r: true,
+          x: 'Auch kleinere Unfälle gehören ins Verbandbuch, damit sie später nachweisbar sind.' },
+        { t: 'choice', q: 'Was machst du mit Kupferresten von der Baustelle?',
+          a: ['Sortenrein sammeln und dem Recycling zuführen', 'In den Restmüll werfen', 'Auf der Baustelle liegen lassen', 'Verbrennen'], r: 0,
+          x: 'Kupfer ist wertvoll und lässt sich fast ohne Verluste wiederverwerten.' },
+        { t: 'choice', q: 'Was ist ein Beitrag des Elektrohandwerks zum Klimaschutz?',
+          a: ['Kunden zu effizienter Technik wie LED, Wärmepumpe und PV beraten und sie fachgerecht bauen', 'Möglichst viel Material bestellen', 'Alte Geräte im Restmüll entsorgen', 'Standby-Geräte empfehlen'], r: 0,
+          x: 'Energiewende und Gebäudetechnik sind Kernthemen des Berufs. Das steckt auch in der neuen Ausbildungsordnung.' }
+      ]
+    }
+  ]
+};

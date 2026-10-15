@@ -1,5 +1,6 @@
 // Abzeichen: werden nach jeder Lektion geprüft. test(state) entscheidet, ob es verdient ist.
 import { ABSCHNITTE } from './kurs.js';
+import { JAHRE, WISO, PRUEFUNGEN, lernfelderOfYear, pruefDoneId } from './schule/index.js';
 
 export const ABZEICHEN = [
   { id: 'start', title: 'Erste Lektion', text: 'Die erste Lektion geschafft.', icon: 'bolt', test: s => s.stats.lessons >= 1 },
@@ -12,4 +13,12 @@ export const ABZEICHEN = [
 ].concat(ABSCHNITTE.map(a => ({
   id: 'ab-' + a.id, title: a.short + ' gemeistert', text: `Abschnittstest ${a.title} bestanden.`, icon: a.icon,
   test: s => !!s.done[a.nodes[a.nodes.length - 1].id]
+}))).concat(JAHRE.map(j => ({
+  id: 'bs-jahr' + j.nr, title: `${j.title} geschafft`, text: `Alle Lernfeldtests im ${j.title} bestanden.`, icon: 'school',
+  test: s => lernfelderOfYear(j.nr).every(b => !!s.done[b.testId])
+})), [
+  { id: 'bs-wiso', title: 'WiSo sicher', text: 'Den WiSo-Test bestanden.', icon: 'user', test: s => !!s.done[WISO.testId] }
+], PRUEFUNGEN.map(p => ({
+  id: 'bs-' + p.id, title: `${p.title} geübt`, text: `Das Prüfungstraining ${p.title} bestanden.`, icon: 'shield',
+  test: s => !!s.done[pruefDoneId(p)]
 })));

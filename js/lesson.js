@@ -179,7 +179,7 @@ const TYPES = {
 
 const TYPE_LABEL = { choice: 'Wähle die richtige Antwort', multi: 'Wähle alle richtigen Antworten', tf: 'Richtig oder falsch?', order: 'Bring in die richtige Reihenfolge', match: 'Ordne richtig zu', num: 'Rechne' };
 
-export function runLesson(container, { title, section, items, mode = 'lesson', onExit, onDone }) {
+export function runLesson(container, { title, section, items, mode = 'lesson', need = 0.8, winText = 'Abschnitt gemeistert!', backText = 'Zurück zum Lernpfad', onExit, onDone }) {
   const test = mode === 'test';
   const queue = items.map((item, n) => ({ item, key: n }));
   const total = queue.length;
@@ -222,7 +222,7 @@ export function runLesson(container, { title, section, items, mode = 'lesson', o
     body.innerHTML = '';
     const it = cur.item;
     const card = h('section', { class: 'ex', 'aria-live': 'polite' },
-      h('p', { class: 'ex-type' }, (section ? section.short + ' · ' : '') + TYPE_LABEL[it.t]),
+      h('p', { class: 'ex-type' }, (it.tag ? it.tag + ' · ' : section ? section.short + ' · ' : '') + TYPE_LABEL[it.t]),
       h('h1', { class: 'ex-q' }, it.q));
     comp = TYPES[it.t](it, auto => { syncCheck(); if (auto === true && comp.auto) submit(); });
     card.append(comp.el);
@@ -280,15 +280,15 @@ export function runLesson(container, { title, section, items, mode = 'lesson', o
     body.innerHTML = '';
     foot.innerHTML = '';
     foot.className = 'lp-foot';
-    const passed = !test || score >= 0.8;
+    const passed = !test || score >= need;
     const card = h('section', { class: 'lp-end' },
       h('div', { class: 'lp-end-icon ' + (passed ? 'ok' : 'bad'), html: icon(passed ? (test ? 'shield' : 'bolt') : 'refresh', 44) }),
-      h('h1', null, test ? (passed ? 'Abschnitt gemeistert!' : 'Noch nicht bestanden') : (perfect ? 'Fehlerfrei!' : 'Lektion geschafft!')),
+      h('h1', null, test ? (passed ? winText : 'Noch nicht bestanden') : (perfect ? 'Fehlerfrei!' : 'Lektion geschafft!')),
       h('p', null, test
-        ? `${Math.round(score * 100)} % richtig. ${passed ? 'Mindestens 80 % waren nötig.' : 'Du brauchst mindestens 80 %. Wiederhole die Lektionen und versuch es noch einmal.'}`
+        ? `${Math.round(score * 100)} % richtig. ${passed ? `Mindestens ${Math.round(need * 100)} % waren nötig.` : `Du brauchst mindestens ${Math.round(need * 100)} %. Wiederhole die Lektionen und versuch es noch einmal.`}`
         : `${correctFirst} von ${total} Aufgaben beim ersten Versuch richtig.`));
     body.append(card);
-    const go = h('button', { type: 'button', class: 'btn primary wide' }, passed ? 'Weiter' : 'Zurück zum Lernpfad');
+    const go = h('button', { type: 'button', class: 'btn primary wide' }, passed ? 'Weiter' : backText);
     go.addEventListener('click', () => onDone({ passed, score, perfect, correctFirst, total }));
     foot.append(go);
     if (passed) sfx.win(); else sfx.fail();

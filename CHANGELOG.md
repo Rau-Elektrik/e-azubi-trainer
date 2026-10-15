@@ -1,5 +1,12 @@
 # Änderungen
 
+## 1.3.0 · 16.10.2026
+- Neu: **Fehler wiederholen**. Jede falsch beantwortete Frage aus Lernpfad und Schule kommt auf eine Liste. Eine Runde übt bis zu 10 davon, die neuesten und häufigsten Fehler zuerst. Wer eine Frage zweimal hintereinander richtig beantwortet, ist sie los.
+- Zu finden unter Schule und unter Fortschritt, jeweils mit der Zahl der wartenden Fragen.
+- Gezählt wird der erste Versuch einer Frage in jeder Lektion, jedem Test und jedem Training.
+- Der bisherige Fortschritt lädt unverändert weiter, auch aus älteren Sicherungen.
+- Für Ausbilder: `npm run katalog` schreibt alle Fragen der Berufsschule als druckbare HTML-Datei, nach Lehrjahr, Lernfeld und Lektion, mit Lösung, Erklärung und einer Zeile für Anmerkungen.
+
 ## 1.2.0 · 15.10.2026
 - Neuer Bereich **Schule** für den Berufsschulstoff der Elektroniker/-innen, Fachrichtung Energie- und Gebäudetechnik. Grundlage sind der KMK-Rahmenlehrplan vom 18.12.2020 und die Elektroniker-Ausbildungsverordnung von 2021.
 - Alle 13 Lernfelder, nach Lehrjahr sortiert, dazu Wirtschafts- und Sozialkunde: 64 Lektionen mit 468 Fragen. Jedes Lernfeld hat eine Lernkarte und einen Lernfeldtest.

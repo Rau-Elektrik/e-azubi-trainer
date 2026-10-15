@@ -1,5 +1,6 @@
 // Fortschritt der Lernenden: XP, Tagesserie, erledigte Lektionen, Abzeichen und Einstellungen.
 // Alles bleibt im Browser des Geräts (localStorage). Export und Import laufen über eine JSON-Datei.
+import { noteAnswer } from './fehler.js';
 
 const KEY = 'eazubi.v1';
 
@@ -19,16 +20,22 @@ const defaults = () => ({
   done: {},
   badges: {},
   stats: { lessons: 0, perfect: 0, practice: 0, tests: 0 },
-  settings: { sound: true }
+  settings: { sound: true },
+  fehler: {}
 });
+
+// Gespeicherten Stand mit den Vorgaben auffüllen. Ältere Stände ohne neue Felder laden so weiter.
+function restore(s) {
+  const d = defaults();
+  const out = Object.assign(d, s, { streak: Object.assign(d.streak, s.streak), stats: Object.assign(d.stats, s.stats), settings: Object.assign(d.settings, s.settings) });
+  if (!out.fehler || typeof out.fehler !== 'object' || Array.isArray(out.fehler)) out.fehler = {};
+  return out;
+}
 
 function load() {
   try {
     const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && s.v === 1) {
-      const d = defaults();
-      return Object.assign(d, s, { streak: Object.assign(d.streak, s.streak), stats: Object.assign(d.stats, s.stats), settings: Object.assign(d.settings, s.settings) });
-    }
+    if (s && s.v === 1) return restore(s);
   } catch (e) { /* leer oder gesperrt: frisch beginnen */ }
   return defaults();
 }
@@ -84,6 +91,8 @@ export const store = {
     store.save();
     return true;
   },
+  // Antwort für „Fehler wiederholen“ merken (key aus itemKey in fehler.js)
+  noteAnswer(key, ok) { if (noteAnswer(state.fehler, key, ok, dayKey())) store.save(); },
   setGoal(n) { state.goal = n; store.save(); },
   setSetting(k, v) { state.settings[k] = v; store.save(); },
 
@@ -92,8 +101,7 @@ export const store = {
     const s = JSON.parse(text);
     if (!s || s.v !== 1 || typeof s.xp !== 'number' || typeof s.done !== 'object') throw new Error('Die Datei ist kein Fortschritt aus dem E-Azubi Trainer.');
     delete s.app; delete s.exportiert;
-    const d = defaults();
-    state = Object.assign(d, s, { streak: Object.assign(d.streak, s.streak), stats: Object.assign(d.stats, s.stats), settings: Object.assign(d.settings, s.settings) });
+    state = restore(s);
     store.save();
   },
   reset() { state = defaults(); store.save(); }

@@ -20,6 +20,10 @@ Schaltplan-Trainer mit Bauteilkasten, Prüfprotokoll, Lern- und Prüfungsmodus u
 - Fragen nach Fach: Fachkunde, Fachrechnen, Schaltpläne, WiSo, Fachenglisch
 - Prüfungstraining für Teil 1 und Teil 2 der Gesellenprüfung
 
+## Version 1.3 (fertig)
+- Fehler wiederholen: falsch beantwortete Fragen gezielt üben, bis sie zweimal hintereinander sitzen
+- Fragenkatalog der Berufsschule zum Ausdrucken und fachlichen Prüfen
+
 ## Phase 3 · Mehr Stoff (als Nächstes)
 - Prüfen nach DIN VDE 0100-600: Isolationsmessung, Schleifenimpedanz, FI-Prüfung als Messsimulation
 - Netzformen TN-C, TN-C-S, TN-S, TT und IT mit interaktiver Fehlerschleife
@@ -28,7 +32,6 @@ Schaltplan-Trainer mit Bauteilkasten, Prüfprotokoll, Lern- und Prüfungsmodus u
 - Gebäudetechnik: KNX-Grundlagen, Sprechanlagen, Netzwerk
 - Stern-Dreieck-Anlauf und Zeitrelais im Schaltplan-Trainer
 - PV: Ost-West-Dach, Speicher und DC-Leitungslänge mit Spannungsfall
-- Wiederholungsmodus: Fehler der letzten Tage gezielt üben
 - Prüfungstraining ausbauen: Situationsaufgaben wie in der Gesellenprüfung, mit Schaltplan und mehreren Teilfragen
 
 ## Phase 4 · Ausbilder (später)

@@ -1,5 +1,5 @@
 // Tests ohne Zusatzpakete: node tests/run-tests.mjs
-// Prüft Schaltplan-Logik, Praxisaufgaben, Lerninhalte und die Versionsangaben.
+// Prüft Schaltplan-Logik, Praxisaufgaben, Lerninhalte, die Fehlerliste und die Versionsangaben.
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -216,6 +216,62 @@ for (const p of BS.PRUEFUNGEN) ok(p.blocks().flatMap(BS.blockItems).length >= p.
 ok(BS.findLektion('lf5-1').block.id === 'lf5' && BS.lektionItems(BS.findLektion('lf5-1'))[0].tag.startsWith('LF 5 · '), 'Lektion lf5-1 oder ihre Kennzeichnung fehlt');
 console.log(`  ${BS.LERNFELDER.length} Lernfelder und WiSo, ${bsIds.size - BS.BLOECKE.length} Lektionen, ${bsItems} Aufgaben`);
 console.log('  ' + BS.FAECHER.map(f => `${f.title} ${perFach[f.id] || 0}`).join(', '));
+
+// ---------- Fehler wiederholen ----------
+section('Fehler wiederholen');
+const FE = await import('../js/fehler.js');
+const allItems = ABSCHNITTE.flatMap(s => s.nodes.filter(n => n.kind === 'lektion').flatMap(n => n.items))
+  .concat(BS.BLOECKE.flatMap(b => b.lektionen.flatMap(l => l.items)));
+const keys = new Set(allItems.map(FE.itemKey));
+ok(keys.size === allItems.length, `Fragen-Schlüssel nicht eindeutig: ${allItems.length} Fragen, ${keys.size} Schlüssel`);
+const q1 = BS.LERNFELDER[0].lektionen[0].items[0];
+ok(FE.itemKey(q1) === FE.itemKey(BS.lektionItems(BS.LERNFELDER[0].lektionen[0])[0]), 'Kennzeichnung über der Frage ändert den Schlüssel');
+ok(FE.itemKey(q1) !== FE.itemKey(Object.assign({}, q1, { q: q1.q + ' ' })), 'Geänderte Frage behält den alten Schlüssel');
+
+// Liste: falsch hinein, zweimal hintereinander richtig wieder heraus
+const L0 = {};
+ok(!FE.noteAnswer(L0, 'a', true, '2026-10-01') && !L0.a, 'Richtige Antwort ohne Fehler landet in der Liste');
+FE.noteAnswer(L0, 'a', false, '2026-10-01');
+FE.noteAnswer(L0, 'a', false, '2026-10-02');
+ok(L0.a && L0.a.n === 2 && L0.a.at === '2026-10-02' && L0.a.ok === 0, 'Fehlerzahl oder Datum falsch: ' + JSON.stringify(L0.a));
+FE.noteAnswer(L0, 'a', true, '2026-10-03');
+ok(L0.a && L0.a.ok === 1, 'Nach einmal richtig schon erledigt');
+FE.noteAnswer(L0, 'a', false, '2026-10-04');
+ok(L0.a && L0.a.ok === 0 && L0.a.n === 3, 'Fehler nach einmal richtig setzt die Folge nicht zurück');
+FE.noteAnswer(L0, 'a', true, '2026-10-05');
+FE.noteAnswer(L0, 'a', true, '2026-10-05');
+ok(!L0.a, 'Nach zweimal hintereinander richtig nicht erledigt');
+
+// Auswahl: höchstens 10, neueste zuerst, am selben Tag die häufigsten zuerst, unbekannte Schlüssel weg
+const idx = new Map(allItems.slice(0, 15).map(it => [FE.itemKey(it), it]));
+const ks = [...idx.keys()];
+const L1 = { gibtsnicht: { at: '2026-10-09', n: 9, ok: 0 } };
+ks.forEach((k, i) => { L1[k] = { at: i < 5 ? '2026-10-01' : '2026-10-05', n: i % 4 + 1, ok: 0 }; });
+const pick = FE.pickFehler(L1, idx);
+ok(pick.length === FE.FEHLER_MAX, `Runde hat ${pick.length} statt ${FE.FEHLER_MAX} Fragen`);
+ok(FE.countFehler(L1, idx) === 15, 'Unbekannter Schlüssel wird mitgezählt');
+const pk = pick.map(FE.itemKey);
+ok(pk.slice(0, 10).every(k => L1[k].at === '2026-10-05'), 'Neueste Fehler kommen nicht zuerst');
+ok(pk.every((k, i) => i === 0 || L1[pk[i - 1]].at > L1[k].at || L1[pk[i - 1]].n >= L1[k].n), 'Häufigste Fehler am selben Tag kommen nicht zuerst');
+ok(FE.pickFehler({}, idx).length === 0 && FE.countFehler({}, idx) === 0, 'Leere Liste liefert Fragen');
+
+// Gespeicherter Stand: alter Stand ohne Liste lädt weiter, neue Fehler werden gespeichert
+const old = { v: 1, xp: 120, days: {}, streak: { count: 2, last: null }, goal: 30, done: { 'sicherheit-1': { at: '2026-10-13', best: 1, stars: 0, times: 1 } }, badges: {}, stats: { lessons: 1 }, settings: { sound: false } };
+let saved = JSON.stringify(old);
+globalThis.localStorage = { getItem: () => saved, setItem(k, v) { saved = v; } };
+const { store: st2 } = await import('../js/store.js?fehler');
+ok(st2.state.xp === 120 && st2.isDone('sicherheit-1') && st2.state.settings.sound === false, 'Alter Stand lädt nicht vollständig');
+ok(st2.state.fehler && typeof st2.state.fehler === 'object' && Object.keys(st2.state.fehler).length === 0, 'Alter Stand bekommt keine leere Fehlerliste');
+const kq = FE.itemKey(q1);
+st2.noteAnswer(kq, false);
+ok(JSON.parse(saved).fehler[kq].n === 1, 'Fehler wird nicht gespeichert');
+st2.noteAnswer(kq, true); st2.noteAnswer(kq, true);
+ok(!JSON.parse(saved).fehler[kq], 'Erledigter Fehler bleibt gespeichert');
+st2.importJSON(JSON.stringify(Object.assign({}, old, { fehler: [1, 2] })));
+ok(!Array.isArray(st2.state.fehler) && Object.keys(st2.state.fehler).length === 0, 'Kaputte Fehlerliste beim Laden einer Sicherung nicht ersetzt');
+st2.importJSON(JSON.stringify(old));
+ok(st2.state.xp === 120 && Object.keys(st2.state.fehler).length === 0, 'Sicherung ohne Fehlerliste lädt nicht');
+console.log(`  ${keys.size} eindeutige Schlüssel, Liste und Speicher geprüft`);
 
 // ---------- Version und Offline-Liste ----------
 section('Version und Service Worker');

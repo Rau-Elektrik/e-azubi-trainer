@@ -1,11 +1,11 @@
 // Service Worker: hält die App offline bereit und meldet neue Versionen.
 // Bei jeder Veröffentlichung VERSION erhöhen (gleich wie in js/version.js). Neue Dateien in CORE eintragen.
-const VERSION = '1.2.0';
+const VERSION = '1.3.0';
 const CACHE = 'eazubi-' + VERSION;
 const FONTS = 'eazubi-fonts';
 const CORE = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
-  'js/main.js', 'js/store.js', 'js/ui.js', 'js/lesson.js', 'js/version.js',
+  'js/main.js', 'js/store.js', 'js/ui.js', 'js/lesson.js', 'js/version.js', 'js/fehler.js',
   'js/content/kurs.js', 'js/content/abzeichen.js',
   'js/content/abschnitte/sicherheit.js', 'js/content/abschnitte/installation.js', 'js/content/abschnitte/steuerung.js',
   'js/content/abschnitte/verteiler.js', 'js/content/abschnitte/zaehler.js', 'js/content/abschnitte/messsysteme.js',

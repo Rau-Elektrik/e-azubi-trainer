@@ -6,6 +6,7 @@ import { ABZEICHEN } from './content/abzeichen.js';
 import { BLOECKE, WISO, JAHRE, FAECHER, findFach, findBlock, findLektion, lernfelderOfYear, blockItems, lektionItems, fachItems,
   PRUEFUNGEN, findPruefung, PRUEF_NEED, pruefDoneId, XP_SCHULE, TEST_COUNT } from './content/schule/index.js';
 import { runLesson } from './lesson.js';
+import { itemKey, pickFehler, countFehler, FEHLER_MAX } from './fehler.js';
 import { APP_VERSION, REPO_URL } from './version.js';
 
 // Praxis-Module werden erst geladen, wenn sie gebraucht werden
@@ -210,6 +211,50 @@ function viewPraxisNode(id) {
   });
 }
 
+// ---------- Fehler wiederholen ----------
+// Alle Fragen aus Lernpfad und Berufsschule, nach Schlüssel. Wird beim ersten Aufruf gebaut.
+let fehlerIndex = null;
+function fehlerPool() {
+  if (fehlerIndex) return fehlerIndex;
+  fehlerIndex = new Map();
+  const add = it => { const k = itemKey(it); if (!fehlerIndex.has(k)) fehlerIndex.set(k, it); };
+  ABSCHNITTE.forEach(s => sectionItems(s).forEach(it => add(Object.assign({}, it, { tag: `Lernpfad · ${s.short}` }))));
+  BLOECKE.forEach(b => blockItems(b).forEach(add));
+  return fehlerIndex;
+}
+// Karte für Berufsschule und Fortschritt. from bestimmt, wohin es nach der Runde zurückgeht.
+function fehlerCard(from) {
+  const n = countFehler(store.state.fehler, fehlerPool());
+  const card = h('section', { class: 'card' },
+    h('div', { class: 'card-head' }, h('h2', { class: 'lbl' }, 'Fehler wiederholen'), h('b', null, n === 1 ? '1 Frage' : `${n} Fragen`)));
+  if (n) {
+    card.append(
+      h('p', null, `${n === 1 ? 'Eine Frage wartet' : `${n} Fragen warten`} auf dich. Eine Runde hat bis zu ${FEHLER_MAX} Fragen, die neuesten und häufigsten Fehler zuerst. Hast du eine Frage zweimal hintereinander richtig, ist sie erledigt.`),
+      h('a', { class: 'btn primary', href: `#/fehler/${from}`, style: 'justify-self:start' }, h('span', { html: icon('refresh', 18) }), `Fehler üben · +${XP.lesson} XP`));
+  } else {
+    card.append(h('p', { class: 'year-note' }, 'Gerade keine offenen Fehler. Jede falsch beantwortete Frage aus Lernpfad und Schule landet hier, bis du sie zweimal hintereinander richtig hast.'));
+  }
+  return card;
+}
+function viewFehler(from) {
+  const back = from === 'schule' ? '#/schule' : '#/fortschritt';
+  const items = pickFehler(store.state.fehler, fehlerPool());
+  if (!items.length) { toast('Gerade keine offenen Fehler.'); location.hash = back; return; }
+  document.body.classList.add('focus');
+  runLesson(view, {
+    title: 'Fehler wiederholen', items, mode: 'lesson',
+    onExit: () => { location.hash = back; },
+    onDone: res => {
+      const st = store.state;
+      st.stats.lessons++;
+      if (res.perfect) st.stats.perfect++;
+      store.save();
+      reward(XP.lesson + (res.perfect ? XP.perfect : 0), 'Fehler wiederholt');
+      location.hash = back;
+    }
+  });
+}
+
 // ---------- Ansicht: Werkstatt ----------
 const TOOLS = [
   { id: 'schaltplan', title: 'Schaltplan-Trainer', text: 'Alle Schaltpläne von der Ausschaltung bis zur Wendeschaltung, frei wählbar.', icon: 'bolt', module: 'schaltplan', single: false },
@@ -277,6 +322,7 @@ function viewSchule(parts) {
   JAHRE.forEach(j => seg.append(h('button', { type: 'button', class: 'btn small', 'aria-pressed': String(j.nr === jahr), 'aria-label': j.title,
     onclick: () => { store.setSetting('lehrjahr', j.nr); render(); } }, `${j.nr}.`)));
   root.append(h('section', { class: 'card' }, h('h2', { class: 'lbl' }, 'Dein Lehrjahr'), seg, h('p', { class: 'year-note' }, J.text)));
+  root.append(fehlerCard('schule'));
 
   root.append(h('h2', { class: 'lbl lbl-head' }, `Lernfelder im ${J.title}`));
   const list = h('div', { class: 'lf-list' });
@@ -429,6 +475,7 @@ function viewFortschritt() {
     h('div', { class: 'tile' }, h('span', { class: 'lbl' }, 'Tagesserie'), h('b', { class: 'live' }, `${store.streakNow()} ${store.streakNow() === 1 ? 'Tag' : 'Tage'}`)),
     h('div', { class: 'tile' }, h('span', { class: 'lbl' }, 'XP gesamt'), h('b', null, s.xp.toLocaleString('de-DE'))),
     h('div', { class: 'tile' }, h('span', { class: 'lbl' }, 'Erledigt'), h('b', null, String(lessonsDone)))));
+  root.append(fehlerCard('fortschritt'));
   const wk = week.reduce((a, d) => a + d.xp, 0);
   const chart = h('section', { class: 'card' },
     h('div', { class: 'card-head' }, h('h2', { class: 'lbl' }, 'Diese Woche'), h('b', null, `${wk} XP`)));
@@ -547,6 +594,7 @@ function render() {
     case 'praxis': viewPraxisNode(a); break;
     case 'werkstatt': viewWerkstatt(a); break;
     case 'schule': viewSchule(parts.slice(1)); break;
+    case 'fehler': viewFehler(a); break;
     case 'fortschritt': viewFortschritt(); break;
     case 'profil': viewProfil(); break;
     default: viewPfad();

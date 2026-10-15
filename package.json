@@ -1,6 +1,6 @@
 {
   "name": "e-azubi-trainer",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "private": true,
   "description": "Lern-App für Auszubildende im Elektrohandwerk",
   "type": "module",
@@ -8,6 +8,7 @@
     "test": "node tests/run-tests.mjs",
     "icons": "node tools/make-icons.mjs",
     "start": "node tools/serve.mjs",
-    "screenshots": "node tools/screenshots.mjs"
+    "screenshots": "node tools/screenshots.mjs",
+    "katalog": "node tools/fragenkatalog.mjs"
   }
 }

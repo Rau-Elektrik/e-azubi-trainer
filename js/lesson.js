@@ -1,6 +1,9 @@
 // Lektionsablauf: Aufgaben nacheinander, sofortige Rückmeldung mit Erklärung.
 // In Lektionen kommen falsch beantwortete Aufgaben am Ende noch einmal. Im Abschnittstest nicht.
+// Der erste Versuch jeder Aufgabe geht in die Liste für „Fehler wiederholen“.
 import { h, esc, icon, shuffle, sfx, announce } from './ui.js';
+import { store } from './store.js';
+import { itemKey } from './fehler.js';
 
 const parseNum = s => parseFloat(String(s).trim().replace(/\s/g, '').replace(/\.(?=\d{3}(\D|$))/g, '').replace(',', '.'));
 const fmtNum = v => Number(v).toLocaleString('de-DE', { maximumFractionDigits: 3 });
@@ -183,7 +186,7 @@ export function runLesson(container, { title, section, items, mode = 'lesson', n
   const test = mode === 'test';
   const queue = items.map((item, n) => ({ item, key: n }));
   const total = queue.length;
-  let solved = 0, firstWrong = new Set(), correctFirst = 0, cur = null, comp = null, answered = false;
+  let solved = 0, firstWrong = new Set(), tried = new Set(), correctFirst = 0, cur = null, comp = null, answered = false;
 
   container.innerHTML = '';
   const root = h('div', { class: 'lesson' });
@@ -248,6 +251,7 @@ export function runLesson(container, { title, section, items, mode = 'lesson', n
     answered = true;
     const res = comp.check();
     const it = cur.item;
+    if (!tried.has(cur.key)) { tried.add(cur.key); store.noteAnswer(itemKey(it), res.ok); }
     if (res.ok) {
       solved++;
       if (!firstWrong.has(cur.key)) correctFirst++;

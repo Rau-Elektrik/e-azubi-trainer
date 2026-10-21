@@ -8,7 +8,9 @@ export const FEHLER_MAX = 10;   // Fragen je Runde
 
 // Prüfsumme cyrb53: kurz, schnell und für ein paar Tausend Fragen eindeutig genug
 export function itemKey(it) {
-  const s = JSON.stringify([it.t, it.q, it.a === undefined ? null : it.a]);
+  // Bildfragen haben oft denselben Fragetext, deshalb zählt das Bild mit. Ältere Schlüssel bleiben gleich.
+  const base = [it.t, it.q, it.a === undefined ? null : it.a];
+  const s = JSON.stringify(it.bild ? base.concat([it.bild]) : base);
   let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
   for (let i = 0; i < s.length; i++) {
     const c = s.charCodeAt(i);

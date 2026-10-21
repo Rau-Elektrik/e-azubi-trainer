@@ -226,7 +226,8 @@ export function runLesson(container, { title, section, items, mode = 'lesson', n
     const it = cur.item;
     const card = h('section', { class: 'ex', 'aria-live': 'polite' },
       h('p', { class: 'ex-type' }, (it.tag ? it.tag + ' · ' : section ? section.short + ' · ' : '') + TYPE_LABEL[it.t]),
-      h('h1', { class: 'ex-q' }, it.q));
+      h('h1', { class: 'ex-q' }, it.q),
+      it.bild ? h('figure', { class: 'ex-fig', role: 'img', 'aria-label': it.alt || 'Abbildung', html: it.bild }) : null);
     comp = TYPES[it.t](it, auto => { syncCheck(); if (auto === true && comp.auto) submit(); });
     card.append(comp.el);
     body.append(card);

@@ -1,5 +1,12 @@
 # Änderungen
 
+## 1.4.0 · 21.10.2026
+- Neu: **Bildfragen**. 43 Fragen zeigen ein Schaltzeichen, einen Stromlaufplan oder einen Grundriss. Die Bilder sind nach DIN EN 60617 gezeichnet und im hellen und dunklen Design gut lesbar.
+- Neue Lektionen am Ende ihres Lernfelds: LF 1 Schaltzeichen und Schaltungen lesen (mit Widerstandsnetz und LED-Schaltung), LF 2 Installationspläne lesen, LF 3 Schützschaltungen und Logik lesen, LF 5 Netzsysteme im Bild, LF 8 Motoranschluss im Bild.
+- Das Fach Schaltpläne hat jetzt 74 statt 42 Fragen. Insgesamt sind es 511 Fragen in 69 Lektionen.
+- Der Fragenkatalog zum Ausdrucken zeigt die Bilder mit.
+- Bisheriger Fortschritt und die Liste „Fehler wiederholen“ bleiben erhalten.
+
 ## 1.3.0 · 16.10.2026
 - Neu: **Fehler wiederholen**. Jede falsch beantwortete Frage aus Lernpfad und Schule kommt auf eine Liste. Eine Runde übt bis zu 10 davon, die neuesten und häufigsten Fehler zuerst. Wer eine Frage zweimal hintereinander richtig beantwortet, ist sie los.
 - Zu finden unter Schule und unter Fortschritt, jeweils mit der Zahl der wartenden Fragen.

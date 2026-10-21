@@ -8,6 +8,7 @@ import jahr2 from './jahr2.js';
 import jahr3 from './jahr3.js';
 import jahr4 from './jahr4.js';
 import wiso from './wiso.js';
+import bildfragen from './bildfragen.js';
 import { FAECHER, findFach } from './faecher.js';
 
 export { FAECHER, findFach };
@@ -15,6 +16,8 @@ export const LERNFELDER = [...jahr1, ...jahr2, ...jahr3, ...jahr4];
 export const WISO = wiso;
 // Alles mit Lektionen: die 13 Lernfelder und WiSo
 export const BLOECKE = LERNFELDER.concat([WISO]);
+// Bildfragen kommen als letzte Lektion an ihr Lernfeld (seit 1.4.0)
+for (const [id, lektion] of Object.entries(bildfragen)) BLOECKE.find(b => b.id === id).lektionen.push(lektion);
 
 export const JAHRE = [
   { nr: 1, title: '1. Lehrjahr', text: 'Grundstufe, gleich für alle Elektroberufe im Handwerk.' },

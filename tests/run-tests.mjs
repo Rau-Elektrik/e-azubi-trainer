@@ -145,6 +145,10 @@ console.log(`  wahrer Wert ${er.trueR(p).toFixed(2)} Ω`);
 function checkItem(it, where) {
   ok(typeof it.q === 'string' && it.q.length > 5, `${where}: Frage fehlt`);
   ok(typeof it.x === 'string' && it.x.length > 5, `${where}: Erklärung fehlt`);
+  if (it.bild !== undefined) {
+    ok(typeof it.bild === 'string' && it.bild.startsWith('<svg') && it.bild.endsWith('</svg>') && !it.bild.includes('undefined') && !it.bild.includes('NaN'), `${where}: Bild ungültig`);
+    ok(typeof it.alt === 'string' && it.alt.length > 10, `${where}: Bildbeschreibung (alt) fehlt`);
+  }
   switch (it.t) {
     case 'choice': ok(Array.isArray(it.a) && it.a.length >= 2 && new Set(it.a).size === it.a.length && Number.isInteger(it.r) && it.r >= 0 && it.r < it.a.length, `${where}: Auswahl ungültig`); break;
     case 'multi': ok(Array.isArray(it.a) && Array.isArray(it.r) && it.r.length >= 1 && it.r.every(k => k >= 0 && k < it.a.length), `${where}: Mehrfachauswahl ungültig`); break;
@@ -214,6 +218,14 @@ for (const f of BS.FAECHER) ok((perFach[f.id] || 0) >= 20, `Fach ${f.title} hat 
 ok(BS.fachItems('fr', 1).every(it => !/^LF (5|6|7|8|9|10|11|12|13) /.test(it.tag)), 'Fachtraining 1. Lehrjahr enthält Stoff späterer Jahre');
 for (const p of BS.PRUEFUNGEN) ok(p.blocks().flatMap(BS.blockItems).length >= p.count * 3, `${p.id}: zu kleiner Aufgabenpool`);
 ok(BS.findLektion('lf5-1').block.id === 'lf5' && BS.lektionItems(BS.findLektion('lf5-1'))[0].tag.startsWith('LF 5 · '), 'Lektion lf5-1 oder ihre Kennzeichnung fehlt');
+const { BILD } = await import('../js/content/schule/bilder.js');
+for (const [k, v] of Object.entries(BILD)) ok(v.startsWith('<svg') && !/undefined|NaN/.test(v) && (v.match(/<text/g) || []).length === (v.match(/<\/text>/g) || []).length, `Bild ${k} ist fehlerhaft`);
+const bildItems = BS.BLOECKE.flatMap(b => b.lektionen.flatMap(l => l.items)).filter(it => it.bild);
+ok(bildItems.length >= 40, `nur ${bildItems.length} Bildfragen`);
+ok(['lf1', 'lf2', 'lf3', 'lf5', 'lf8'].every(id => BS.findBlock(id).lektionen.at(-1).items.every(it => it.bild || it.t === 'tf')), 'Bildlektion steht nicht am Ende ihres Lernfelds');
+ok(BS.findLektion('lf1-1').title === 'Elektrische Grundgrößen' && BS.findLektion('lf1-7').title === 'Schaltzeichen und Schaltungen lesen', 'Lektions-IDs in LF 1 verschoben');
+const { itemKey: ik } = await import('../js/fehler.js');
+ok(new Set(bildItems.map(ik)).size === bildItems.length, 'Bildfragen haben doppelte Fehler-Schlüssel');
 console.log(`  ${BS.LERNFELDER.length} Lernfelder und WiSo, ${bsIds.size - BS.BLOECKE.length} Lektionen, ${bsItems} Aufgaben`);
 console.log('  ' + BS.FAECHER.map(f => `${f.title} ${perFach[f.id] || 0}`).join(', '));
 

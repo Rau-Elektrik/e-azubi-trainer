@@ -1,6 +1,6 @@
 // Service Worker: hält die App offline bereit und meldet neue Versionen.
 // Bei jeder Veröffentlichung VERSION erhöhen (gleich wie in js/version.js). Neue Dateien in CORE eintragen.
-const VERSION = '1.3.0';
+const VERSION = '1.4.0';
 const CACHE = 'eazubi-' + VERSION;
 const FONTS = 'eazubi-fonts';
 const CORE = [
@@ -11,7 +11,7 @@ const CORE = [
   'js/content/abschnitte/verteiler.js', 'js/content/abschnitte/zaehler.js', 'js/content/abschnitte/messsysteme.js',
   'js/content/abschnitte/erdung.js', 'js/content/abschnitte/emob.js', 'js/content/abschnitte/pv.js',
   'js/content/schule/index.js', 'js/content/schule/faecher.js', 'js/content/schule/jahr1.js', 'js/content/schule/jahr2.js',
-  'js/content/schule/jahr3.js', 'js/content/schule/jahr4.js', 'js/content/schule/wiso.js',
+  'js/content/schule/jahr3.js', 'js/content/schule/jahr4.js', 'js/content/schule/wiso.js', 'js/content/schule/bilder.js', 'js/content/schule/bildfragen.js',
   'js/practice/schaltplan.js', 'js/practice/netz.js', 'js/practice/verteiler.js', 'js/practice/zaehlerschrank.js',
   'js/practice/erdung.js', 'js/practice/pv.js',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png'

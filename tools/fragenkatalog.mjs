@@ -29,6 +29,7 @@ const question = (it, l, i) => `
 <article class="q">
   <p class="meta"><b>Nr. ${++nr}</b> · ${esc(l.id)} / ${i + 1} · ${esc(findFach(it.f).title)} · ${TYP[it.t] || it.t}</p>
   <h4>${esc(it.q)}</h4>
+  ${it.bild ? `<figure class="fig">${it.bild}<figcaption>${esc(it.alt || '')}</figcaption></figure>` : ''}
   ${answers(it)}
   <p class="x"><b>Erklärung:</b> ${esc(it.x)}</p>
   <div class="note"><span>Anmerkung:</span><span class="box">☐ in Ordnung &nbsp; ☐ ändern</span><div class="line"></div><div class="line"></div></div>
@@ -78,6 +79,9 @@ const html = `<!doctype html>
   h3 { font-size: 12pt; margin: 12px 0 4px; }
   h3 small { font-weight: normal; font-size: 9pt; }
   .jahr + .jahr { break-before: page; }
+  .fig { margin: 4px 0 6px; color: #000; }
+  .fig svg { width: auto; height: auto; max-width: 300px; max-height: 170px; display: block; }
+  .fig figcaption { font-size: 10px; color: #555; }
   .q { border: 1px solid #bbb; border-radius: 4px; padding: 6px 10px 8px; margin: 8px 0; break-inside: avoid; }
   .meta { margin: 0; font-size: 9pt; }
   h4 { font-size: 11pt; margin: 4px 0; }

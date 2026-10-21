@@ -119,6 +119,8 @@ sw.js                    Offline-Speicher und Update-Meldung
 
 `x` ist die Erklärung, die nach der Antwort erscheint.
 
+Jede Aufgabe kann ein Bild zeigen: `bild` ist ein SVG aus `js/content/schule/bilder.js`, `alt` beschreibt es in Worten für Screenreader und den Fragenkatalog. Die Bildfragen der Berufsschule stehen in `js/content/schule/bildfragen.js` und werden als letzte Lektion an ihr Lernfeld gehängt.
+
 Im Bereich Berufsschule stehen die Fragen in `js/content/schule/jahr1.js` bis `jahr4.js` und `wiso.js`. Jede Lektion hat ein Fach (`fach: 'fk'`), das für alle ihre Fragen gilt. Eine einzelne Frage kann mit `f: 'en'` einem anderen Fach zugeordnet werden. Die Fächer stehen in `js/content/schule/faecher.js`. Neue Lektionen hängst du am besten hinten an, sonst verschieben sich die gespeicherten Fortschritte. Muss eine Lektion dazwischen, bekommt sie einen eigenen `key`.
 
 ### Einen Abschnitt ergänzen

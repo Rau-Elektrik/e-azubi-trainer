@@ -24,6 +24,9 @@ Schaltplan-Trainer mit Bauteilkasten, Prüfprotokoll, Lern- und Prüfungsmodus u
 - Fehler wiederholen: falsch beantwortete Fragen gezielt üben, bis sie zweimal hintereinander sitzen
 - Fragenkatalog der Berufsschule zum Ausdrucken und fachlichen Prüfen
 
+## Version 1.4 (fertig)
+- Bildfragen mit Schaltzeichen, Stromlaufplänen, Grundrissen, Netzsystemen und Klemmbrett
+
 ## Phase 3 · Mehr Stoff (als Nächstes)
 - Prüfen nach DIN VDE 0100-600: Isolationsmessung, Schleifenimpedanz, FI-Prüfung als Messsimulation
 - Netzformen TN-C, TN-C-S, TN-S, TT und IT mit interaktiver Fehlerschleife
